@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity" />
-        <activity android:name=".activity_register1"></activity>
+        <activity android:name=".activity_register1" />
+        <activity android:name=".BuscarPropiedadesActivity" />
+        <activity android:name=".InfoPropiedadActivity"></activity>
     </application>
 
 </manifest>
