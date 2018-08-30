@@ -16,6 +16,10 @@
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity" />
         <activity android:name=".activity_register1" />
+<<<<<<< HEAD
+        <activity android:name=".BuscarPropiedadesActivity" />
+        <activity android:name=".InfoPropiedadActivity"></activity>
+=======
 
         <activity android:name=".activityRegister2" />
         <activity android:name=".activity_agregarAlojamiento" />
@@ -26,6 +30,7 @@
         <activity android:name=".ChatActivity" />
         <activity android:name=".UserChatActivity"></activity>
 
+>>>>>>> master
     </application>
 
 </manifest>

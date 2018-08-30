@@ -16,6 +16,12 @@
 
         <Button
             android:id="@+id/button2"
+<<<<<<< HEAD
+            android:layout_width="62dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/actionModeCloseDrawable" />
+    </RelativeLayout>
+=======
             android:layout_width="39dp"
             android:layout_height="31dp"
             android:layout_marginBottom="8dp"
@@ -224,4 +230,5 @@
             </android.support.constraint.ConstraintLayout>
         </RelativeLayout>
     </ScrollView>
+>>>>>>> master
 </RelativeLayout>
