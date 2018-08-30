@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_register1"
-    android:background="@drawable/background_gradient">
+    android:background="@drawable/background_gradient"
+    tools:context=".activityRegister2">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,12 +16,6 @@
 
         <Button
             android:id="@+id/button2"
-<<<<<<< HEAD
-            android:layout_width="62dp"
-            android:layout_height="wrap_content"
-            android:background="?attr/actionModeCloseDrawable" />
-    </RelativeLayout>
-=======
             android:layout_width="39dp"
             android:layout_height="31dp"
             android:layout_marginBottom="8dp"
@@ -70,21 +64,21 @@
 
                 <TextView
                     android:id="@+id/usernametextView"
-                    android:layout_width="69dp"
+                    android:layout_width="88dp"
                     android:layout_height="23dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="24dp"
-                    android:text="Nombre:"
+                    android:text="Username:"
                     android:textColor="#ffffff"
                     android:textSize="18dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.087"
+                    app:layout_constraintHorizontal_bias="0.092"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.036" />
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <EditText
                     android:id="@+id/UsernameeditText"
@@ -112,7 +106,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Apellido:"
+                    android:text="Email:"
                     android:textColor="#ffffff"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -142,13 +136,13 @@
 
                 <TextView
                     android:id="@+id/ContraseñatextView"
-                    android:layout_width="69dp"
-                    android:layout_height="23dp"
+                    android:layout_width="102dp"
+                    android:layout_height="31dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="País:"
+                    android:text="Contraseña:"
                     android:textColor="#ffffff"
                     android:textSize="18dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -158,77 +152,77 @@
                     app:layout_constraintTop_toBottomOf="@+id/ApellidoeditText"
                     app:layout_constraintVertical_bias="0.045" />
 
-                <Spinner
-                    android:id="@+id/Paisspinner"
-                    android:layout_width="218dp"
-                    android:layout_height="35dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#ffffff"
-                    android:entries="@array/countries_array"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.173"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ContraseñatextView"
-                    app:layout_constraintVertical_bias="0.031" />
-
-                <TextView
-                    android:id="@+id/CiudadtextView"
-                    android:layout_width="69dp"
-                    android:layout_height="23dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Ciudad:"
-                    android:textColor="#ffffff"
-                    android:textSize="18dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.086"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Paisspinner"
-                    app:layout_constraintVertical_bias="0.054" />
-
-                <Spinner
-                    android:id="@+id/Ciudadspinner"
-                    android:layout_width="218dp"
-                    android:layout_height="35dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#ffffff"
-                    android:entries="@array/ciudades_array"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.173"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/CiudadtextView"
-                    app:layout_constraintVertical_bias="0.01" />
-
                 <Button
                     android:id="@+id/button"
-                    android:layout_width="33dp"
-                    android:layout_height="30dp"
+                    android:layout_width="102dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="28dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#E9E8E8"
+                    android:elevation="0dp"
+                    android:rotation="0"
+                    android:text="Registrarse"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <EditText
+                    android:id="@+id/ContraseñaeditText"
+                    android:layout_width="218dp"
+                    android:layout_height="35dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:background="?android:attr/actionModeCloseDrawable"
-                    android:backgroundTint="#ffffff"
-                    android:rotation="180"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="#ffffff"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    app:layout_constraintBottom_toTopOf="@+id/button"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.971"
+                    app:layout_constraintHorizontal_bias="0.169"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/ContraseñatextView"
+                    app:layout_constraintVertical_bias="0.063" />
+
+                <TextView
+                    android:id="@+id/ConfirmartextView"
+                    android:layout_width="189dp"
+                    android:layout_height="27dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Confirmar contraseña:"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toTopOf="@+id/button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.134"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ContraseñaeditText"
+                    app:layout_constraintVertical_bias="0.129" />
+
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="218dp"
+                    android:layout_height="35dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="#ffffff"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    app:layout_constraintBottom_toTopOf="@+id/button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ConfirmartextView"
+                    app:layout_constraintVertical_bias="0.21" />
             </android.support.constraint.ConstraintLayout>
         </RelativeLayout>
     </ScrollView>
->>>>>>> master
+
 </RelativeLayout>
