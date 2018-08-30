@@ -15,7 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity" />
-        <activity android:name=".activity_register1"></activity>
+        <activity android:name=".Reservas" />
+        <activity android:name=".CalificacionCliente" />
+        <activity android:name=".ConsultaReservas" />
+        <activity android:name=".prueba" />
+        <activity android:name=".VerPerfilActivity" />
+        <activity
+            android:name=".EditarPerfilActivity"
+            android:label="@string/title_activity_editar_perfil"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

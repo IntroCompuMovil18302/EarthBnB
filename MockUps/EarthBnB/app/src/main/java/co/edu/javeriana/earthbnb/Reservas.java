@@ -3,11 +3,11 @@ package co.edu.javeriana.earthbnb;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class activity_register1 extends AppCompatActivity {
+public class Reservas extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register1);
+        setContentView(R.layout.reserva);
     }
 }
