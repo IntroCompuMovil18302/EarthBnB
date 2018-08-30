@@ -4,6 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_register1">
+    tools:context=".activity_register1"
+    android:background="@drawable/background_gradient">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#64c2c8">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="62dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/null"
+            android:layout_alignTop="@+id/null"
+            android:background="?attr/actionModeCloseDrawable" />
+    </RelativeLayout>
 </RelativeLayout>
