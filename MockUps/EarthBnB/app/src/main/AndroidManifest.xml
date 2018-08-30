@@ -16,21 +16,19 @@
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity" />
         <activity android:name=".activity_register1" />
-<<<<<<< HEAD
         <activity android:name=".BuscarPropiedadesActivity" />
-        <activity android:name=".InfoPropiedadActivity"></activity>
-=======
-
+        <activity android:name=".InfoPropiedadActivity" />
         <activity android:name=".activityRegister2" />
         <activity android:name=".activity_agregarAlojamiento" />
-        <activity android:name=".activity_agregar_alojamiento2"></activity>
-
+        <activity android:name=".activity_agregar_alojamiento2" />
         <activity android:name=".FinalizarReserva" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".UserChatActivity"></activity>
-
->>>>>>> master
+        <activity android:name=".UserChatActivity" />
+        <activity android:name=".Reservas" />
+        <activity android:name=".CalificacionCliente" />
+        <activity android:name=".VerPerfilActivity" />
+        <activity android:name=".EditarPerfilActivity"></activity>
     </application>
 
 </manifest>
