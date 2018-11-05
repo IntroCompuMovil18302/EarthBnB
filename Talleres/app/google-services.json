@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1098821212833",
+    "firebase_url": "https://earthbnb-8e9db.firebaseio.com",
+    "project_id": "earthbnb-8e9db",
+    "storage_bucket": "earthbnb-8e9db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098821212833:android:922a100d1a884887",
+        "android_client_info": {
+          "package_name": "com.gordos.earthbnb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1098821212833-a4okdkep0aqcmb6d71i39hl5opuo8ubr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gordos.earthbnb",
+            "certificate_hash": "3efab9e7e0365e0329733c246e6951c8c40775e3"
+          }
+        },
+        {
+          "client_id": "1098821212833-udnsj63rjpn838b2u168b9mgpbbq1nfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf4PA5bccw1OItrkVN6E_AbX8GWip25Pc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1098821212833-udnsj63rjpn838b2u168b9mgpbbq1nfr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

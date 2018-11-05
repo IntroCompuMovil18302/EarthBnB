@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">EarthBnB</string>
+
+    <!-- Hints -->
+    <string name="hint_correo">Correo electrónico</string>
+    <string name="hint_contrasena">Contraseña</string>
+    <string name="hint_nombre">Nombre</string>
+    <string name="hint_apellido">Apellido</string>
+    <string name="hint_direccion">Dirección</string>
+
+    <!-- Labels -->
+    <string name="label_iniciar_sesion">Iniciar sesión</string>
+    <string name="label_registrarse">Registrarse</string>
+    <string name="label_galeria">Galeria</string>
+    <string name="label_camara">Cámara</string>
+    <string name="label_registrarme">Registrarme</string>
+
+    <!-- Mensajes -->
+    <string name="msg_error_autenticacion">Se ha producido un error al autenticarse</string>
+
+    <!-- Opciones del menú -->
+    <string name="menu_cerrar_sesion">Cerrar sesión</string>
+    <string name="menu_configuracion">Configuración</string>
+    <string name="menu_perfil">Perfil</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- <string name=""></string> -->
+</resources>
