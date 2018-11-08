@@ -192,16 +192,15 @@
 
                 <ImageButton
                     android:id="@+id/imagenCargada"
-                    android:layout_width="113dp"
+                    android:layout_width="59dp"
                     android:layout_height="52dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
                     android:background="#ffffff"
                     android:scaleType="fitCenter"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textView5"
                     app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
-                    app:layout_constraintVertical_bias="0.0"
                     app:srcCompat="@mipmap/ic_add_foreground" />
 
                 <!--<ImageButton
@@ -243,12 +242,64 @@
                     app:layout_constraintVertical_bias="0.205"
                     app:srcCompat="@mipmap/ic_add_foreground" />-->
 
+                <ImageButton
+                    android:id="@+id/imagenCargada2"
+                    android:layout_width="59dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ffffff"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@+id/et_mostrar_fecha_picker"
+                    app:layout_constraintStart_toEndOf="@+id/imagenCargada"
+                    app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@mipmap/ic_add_foreground" />
+
+                <ImageButton
+                    android:id="@+id/imagenCargada3"
+                    android:layout_width="59dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ffffff"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@+id/et_mostrar_fecha_picker"
+                    app:layout_constraintStart_toEndOf="@+id/imagenCargada2"
+                    app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@mipmap/ic_add_foreground" />
+
+                <ImageButton
+                    android:id="@+id/imagenCargada4"
+                    android:layout_width="59dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ffffff"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toTopOf="@+id/et_mostrar_fecha_picker"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/imagenCargada3"
+                    app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@mipmap/ic_add_foreground" />
+
                 <EditText
                     android:id="@+id/et_mostrar_fecha_picker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="28dp"
+                    android:layout_marginTop="20dp"
                     android:ems="10"
                     android:hint="@string/formato_fecha"
                     android:inputType="date"
@@ -261,12 +312,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginRight="8dp"
                     android:background="#ffffff"
                     android:scaleType="center"
                     android:src="@mipmap/ic_add"
-                    app:layout_constraintHorizontal_bias="0.108"
+                    app:layout_constraintHorizontal_bias="0.024"
                     app:layout_constraintLeft_toRightOf="@+id/et_mostrar_fecha_picker"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imagenCargada"
@@ -288,6 +339,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ib_obtener_fecha"
                     app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="72dp"
+                    android:layout_height="47dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Añadir Imagenes"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toTopOf="@+id/et_mostrar_fecha_picker"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/Ciudadspinner"
+                    app:layout_constraintVertical_bias="0.392" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
