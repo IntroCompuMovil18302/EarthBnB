@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "250600033356",
+    "firebase_url": "https://earthbandb-62fc2.firebaseio.com",
+    "project_id": "earthbandb-62fc2",
+    "storage_bucket": "earthbandb-62fc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250600033356:android:ef5ed99ff30b8d7a",
+        "android_client_info": {
+          "package_name": "co.edu.javeriana.earthbnb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "250600033356-g987k8isgqn4lbkon362bokb8sv1bmpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.edu.javeriana.earthbnb",
+            "certificate_hash": "77bf3bbbb754201288b64ac5708b544c7125ff81"
+          }
+        },
+        {
+          "client_id": "250600033356-svercgdbtutb4mmke6vmnemqri7mvqbs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4zFxrFXFwqcAl5xATFVe6fuAKxV11_Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "250600033356-svercgdbtutb4mmke6vmnemqri7mvqbs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250600033356:android:1c82db6518d017cb",
+        "android_client_info": {
+          "package_name": "earthbandb.javeriana.edu.co.earthbandb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "250600033356-mru40hauuojit8ng9ivdc9ou4q48cnpb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "earthbandb.javeriana.edu.co.earthbandb",
+            "certificate_hash": "77bf3bbbb754201288b64ac5708b544c7125ff81"
+          }
+        },
+        {
+          "client_id": "250600033356-pqjfabdqrplb395r9lg687p7skr6u4a4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "earthbandb.javeriana.edu.co.earthbandb",
+            "certificate_hash": "3efab9e7e0365e0329733c246e6951c8c40775e3"
+          }
+        },
+        {
+          "client_id": "250600033356-svercgdbtutb4mmke6vmnemqri7mvqbs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4zFxrFXFwqcAl5xATFVe6fuAKxV11_Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "250600033356-svercgdbtutb4mmke6vmnemqri7mvqbs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

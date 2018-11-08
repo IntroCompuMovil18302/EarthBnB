@@ -1,0 +1,274 @@
+package earthbandb.javeriana.edu.co.earthbandb;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Calendar;
+
+public class agregarAlojamientoActivity extends AppCompatActivity implements View.OnClickListener{
+
+    Button agregar;
+    EditText valor;
+    EditText descripcion;
+    Spinner spinCiudad;
+    Spinner spinHuesp;
+    Spinner spinTipo;
+    FirebaseAuth firebaseAuth;
+    ProgressDialog progressDialog;
+    DatabaseReference myRef;
+    FirebaseDatabase database;
+    ImageButton imagenCarg;
+    ImageButton imagenCarg2;
+    ImageButton imagenCarg3;
+    ImageButton imagenCarg4;
+    ImageButton btnAgregarAlojamientoMapa;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    Uri selectedImage;
+    private static final int SELECT_FILE = 1;
+    private static final String CERO = "0";
+    private static final String BARRA = "/";
+
+    //Calendario para obtener fecha & hora
+    public final Calendar c = Calendar.getInstance();
+
+    //Variables para obtener la fecha
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
+    EditText etFecha;
+    ImageButton ibObtenerFecha;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_agregar_alojamiento);
+        agregar=(Button)findViewById(R.id.btnAgregarAlojamiento);
+        valor=(EditText)findViewById(R.id.ValoreditText);
+        descripcion=(EditText)findViewById(R.id.CiudadtextView);
+        spinTipo=(Spinner)findViewById(R.id.spinner);
+        spinCiudad=(Spinner)findViewById(R.id.Ciudadspinner);
+        spinHuesp=(Spinner) findViewById(R.id.cantSpinner);
+        firebaseAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(this);
+        database = FirebaseDatabase.getInstance();
+        imagenCarg=(ImageButton)findViewById(R.id.imagenCargada);
+        btnAgregarAlojamientoMapa = (ImageButton) findViewById(R.id.img_btn_map);
+        //imagenCarg2=(ImageButton)findViewById(R.id.imagenCargada2);
+        //imagenCarg3=(ImageButton)findViewById(R.id.imagenCargada3);
+        //imagenCarg4=(ImageButton)findViewById(R.id.imagenCargada4);
+        //btnAbrirCalendario=(Button)findViewById(R.id.btnAbrirCalendario);
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        imagenCarg.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                abrirGaleria(v);
+            }
+        });
+
+        btnAgregarAlojamientoMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(agregarAlojamientoActivity.this, AgregarAlojamientoMapaActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        agregar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String idAlojamiento=registrarAlojamientoDatabase();
+                if(!idAlojamiento.equals("")){
+                    subirImagenStorage(idAlojamiento);
+                    Intent intent=new Intent(agregarAlojamientoActivity.this,buscarPropiedades.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        etFecha = (EditText) findViewById(R.id.et_mostrar_fecha_picker);
+        //Widget ImageButton del cual usaremos el evento clic para obtener la fecha
+        ibObtenerFecha = (ImageButton) findViewById(R.id.ib_obtener_fecha);
+        //Evento setOnClickListener - clic
+        ibObtenerFecha.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ib_obtener_fecha:
+                obtenerFecha();
+                break;
+        }
+    }
+
+    private void obtenerFecha(){
+        DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                //Esta variable lo que realiza es aumentar en uno el mes ya que comienza desde 0 = enero
+                final int mesActual = month + 1;
+                //Formateo el día obtenido: antepone el 0 si son menores de 10
+                String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+                //Formateo el mes obtenido: antepone el 0 si son menores de 10
+                String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
+                //Muestro la fecha con el formato deseado
+                etFecha.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+
+
+            }
+            //Estos valores deben ir en ese orden, de lo contrario no mostrara la fecha actual
+            /**
+             *También puede cargar los valores que usted desee
+             */
+        },anio, mes, dia);
+        //Muestro el widget
+        recogerFecha.show();
+
+    }
+    public String registrarAlojamientoDatabase(){
+        String precio = valor.getText().toString().trim();
+        String dscp= descripcion.getText().toString();
+        String tipo=spinTipo.getSelectedItem().toString();
+        String ciudad=spinCiudad.getSelectedItem().toString();
+        String cant=spinHuesp.getSelectedItem().toString();
+        String fecha=etFecha.getText().toString();
+        Toast.makeText(this,"fecha:"+fecha,Toast.LENGTH_LONG).show();
+        if(TextUtils.isEmpty(precio)){
+            Toast.makeText(this,"Se debe ingresar un valor válido",Toast.LENGTH_LONG).show();
+            return "";
+        }
+        if(TextUtils.isEmpty(dscp)){
+            Toast.makeText(this,"Se debe ingresar una descripcion",Toast.LENGTH_LONG).show();
+            return "";
+        }
+        if(TextUtils.isEmpty(fecha)){
+            Toast.makeText(this,"Se debe ingresar una fecha inicial",Toast.LENGTH_LONG).show();
+            return "";
+        }
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        Alojamiento alojamiento=new Alojamiento(precio,dscp,tipo,ciudad,cant,user.getUid(),fecha);
+        myRef = database.getReference("alojamientos");
+        String idAloj=myRef.push().getKey();
+        myRef.child(idAloj).setValue(alojamiento);
+        return idAloj;
+    }
+
+    //abrir la galeria de fotos del dispositivo
+    public void abrirGaleria(View v){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(intent, "Seleccione una imagen"),
+                SELECT_FILE);
+    }
+
+    //Re-escritura del metodo onActivity
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        Uri selectedImageUri = null;
+
+
+        String filePath = null;
+        switch (requestCode) {
+            case SELECT_FILE:
+                if (resultCode == Activity.RESULT_OK) {
+                    selectedImage = imageReturnedIntent.getData();
+                    String selectedPath=selectedImage.getPath();
+                    if (requestCode == SELECT_FILE) {
+
+                        if (selectedPath != null) {
+                            InputStream imageStream = null;
+                            try {
+                                imageStream = getContentResolver().openInputStream(
+                                        selectedImage);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Transformamos la URI de la imagen a inputStream y este a un Bitmap
+                            Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                            // Ponemos nuestro bitmap en un ImageView que tengamos en la vista
+                            imagenCarg.setImageBitmap(bmp);
+
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    //Metodo auxiliar para llamar uploadImage
+    public void subirImagenStorage(String idAlojamiento){
+        uploadImage(idAlojamiento);
+    }
+
+    //agrega la imagen al storage con id del alojamiento como nombre
+    public void uploadImage(String idAlojamiento) {
+
+        if(selectedImage != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("images/"+ idAlojamiento);
+            ref.putFile(selectedImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        }
+                    });
+        }
+    }
+
+}
