@@ -8,15 +8,19 @@ public class Alojamiento {
     private String huespedes;
     private String idOwner;
     private String fecha;
+    private double latitud;
+    private double longitud;
 
-    Alojamiento(String valor, String descripcion, String tipo, String ciudad, String huespedes,String idOwner,String fecha) {
+    Alojamiento(String valor, String descripcion, String tipo, String ciudad, String huespedes, String idOwner, String fecha, double latitud, double longitud) {
         this.valor = valor;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.ciudad = ciudad;
         this.huespedes = huespedes;
         this.idOwner = idOwner;
-        this.fecha=fecha;
+        this.fecha = fecha;
+        this.latitud = latitud;
+        this.longitud = longitud;
     }
 
     public String getIdOwner() {
@@ -67,7 +71,27 @@ public class Alojamiento {
         this.huespedes = huespedes;
     }
 
-    public String getFecha() { return fecha; }
+    public String getFecha() {
+        return fecha;
+    }
 
-    public void setFecha(String fecha) { this.fecha = fecha; }
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
+    }
+
+    public double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
+    }
 }

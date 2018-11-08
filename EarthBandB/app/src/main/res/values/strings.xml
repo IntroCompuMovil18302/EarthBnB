@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">EarthBandB</string>
+    
+    <!--<string name="google_place_api">AIzaSyBhHTgsUynwhanscYcaDWNTpGQSbdZiAhI</string>-->
 
     <!-- Hints -->
     <string name="hint_correo">Correo electrónico</string>
