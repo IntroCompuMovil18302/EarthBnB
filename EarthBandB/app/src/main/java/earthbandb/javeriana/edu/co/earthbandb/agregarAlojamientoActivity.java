@@ -60,6 +60,9 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
     FirebaseStorage storage;
     StorageReference storageReference;
     Uri selectedImage;
+    Uri selectedImage2;
+    Uri selectedImage3;
+    Uri selectedImage4;
     LatLng ubicacionAlojamiento;
     private static final int SELECT_FILE = 1;
     private static final String CERO = "0";
@@ -93,14 +96,32 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
         database = FirebaseDatabase.getInstance();
         imagenCarg = (ImageButton) findViewById(R.id.imagenCargada);
         btnAgregarAlojamientoMapa = (ImageButton) findViewById(R.id.img_btn_map);
-        //imagenCarg2=(ImageButton)findViewById(R.id.imagenCargada2);
-        //imagenCarg3=(ImageButton)findViewById(R.id.imagenCargada3);
-        //imagenCarg4=(ImageButton)findViewById(R.id.imagenCargada4);
+        imagenCarg2=(ImageButton)findViewById(R.id.imagenCargada2);
+        imagenCarg3=(ImageButton)findViewById(R.id.imagenCargada3);
+        imagenCarg4=(ImageButton)findViewById(R.id.imagenCargada4);
         //btnAbrirCalendario=(Button)findViewById(R.id.btnAbrirCalendario);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
         imagenCarg.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                abrirGaleria(v);
+            }
+        });
+
+        imagenCarg2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                abrirGaleria(v);
+            }
+        });
+
+        imagenCarg3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                abrirGaleria(v);
+            }
+        });
+
+        imagenCarg4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 abrirGaleria(v);
             }
@@ -230,15 +251,40 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
         switch (requestCode) {
             case SELECT_FILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    selectedImage = data.getData();
+                    int op = 1;
+                    if(selectedImage == null) {
+                        selectedImage = data.getData();
+                        op = 1;
+                    } else if(selectedImage2 == null) {
+                        selectedImage2 = data.getData();
+                        op = 2;
+                    } else if(selectedImage3 == null) {
+                        selectedImage3 = data.getData();
+                        op = 3;
+                    } else if(selectedImage4 == null) {
+                        selectedImage4 = data.getData();
+                        op = 4;
+                    }
+
                     String selectedPath = selectedImage.getPath();
                     if (requestCode == SELECT_FILE) {
 
                         if (selectedPath != null) {
                             InputStream imageStream = null;
                             try {
-                                imageStream = getContentResolver().openInputStream(
-                                        selectedImage);
+                                if(op == 1) {
+                                    imageStream = getContentResolver().openInputStream(
+                                            selectedImage);
+                                } else if(op == 2) {
+                                    imageStream = getContentResolver().openInputStream(
+                                            selectedImage2);
+                                } else if(op == 3) {
+                                    imageStream = getContentResolver().openInputStream(
+                                            selectedImage3);
+                                } else if(op == 4) {
+                                    imageStream = getContentResolver().openInputStream(
+                                            selectedImage4);
+                                }
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             }
@@ -246,7 +292,16 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
                             // Transformamos la URI de la imagen a inputStream y este a un Bitmap
                             Bitmap bmp = BitmapFactory.decodeStream(imageStream);
                             // Ponemos nuestro bitmap en un ImageView que tengamos en la vista
-                            imagenCarg.setImageBitmap(bmp);
+
+                            if(op == 1) {
+                                imagenCarg.setImageBitmap(bmp);
+                            } else if(op == 2) {
+                                imagenCarg2.setImageBitmap(bmp);
+                            } else if(op == 3) {
+                                imagenCarg3.setImageBitmap(bmp);
+                            } else if(op == 4) {
+                                imagenCarg4.setImageBitmap(bmp);
+                            }
 
                         }
                     }
@@ -276,8 +331,101 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/" + idAlojamiento);
+            StorageReference ref = storageReference.child("images/" + idAlojamiento + "/img_1.jpg");
             ref.putFile(selectedImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+
+        if (selectedImage2 != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("images/" + idAlojamiento + "/img_2.jpg");
+            ref.putFile(selectedImage2)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+
+        if (selectedImage3 != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("images/" + idAlojamiento + "/img_3.jpg");
+            ref.putFile(selectedImage3)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+
+        if (selectedImage4 != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("images/" + idAlojamiento + "/img_4.jpg");
+            ref.putFile(selectedImage4)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
