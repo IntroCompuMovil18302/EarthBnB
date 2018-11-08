@@ -64,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         TextVpass=(EditText) findViewById(R.id.verifyEditText);
         TextNombre=(EditText) findViewById(R.id.NombreEditText);
         TextApellido=(EditText) findViewById(R.id.ApellidoeditText);
-        TextUsername=(EditText) findViewById(R.id.usernameEditText);
+        //TextUsername=(EditText) findViewById(R.id.usernameEditText);
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         database = FirebaseDatabase.getInstance();
