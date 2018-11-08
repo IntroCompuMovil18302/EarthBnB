@@ -20,6 +20,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-public class agregarAlojamientoActivity extends AppCompatActivity implements View.OnClickListener{
+public class agregarAlojamientoActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button agregar;
     EditText valor;
@@ -55,6 +60,7 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
     FirebaseStorage storage;
     StorageReference storageReference;
     Uri selectedImage;
+    LatLng ubicacionAlojamiento;
     private static final int SELECT_FILE = 1;
     private static final String CERO = "0";
     private static final String BARRA = "/";
@@ -69,21 +75,23 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
     EditText etFecha;
     ImageButton ibObtenerFecha;
 
+    private static final int PLACE_PICKER_REQUEST = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_agregar_alojamiento);
-        agregar=(Button)findViewById(R.id.btnAgregarAlojamiento);
-        valor=(EditText)findViewById(R.id.ValoreditText);
-        descripcion=(EditText)findViewById(R.id.CiudadtextView);
-        spinTipo=(Spinner)findViewById(R.id.spinner);
-        spinCiudad=(Spinner)findViewById(R.id.Ciudadspinner);
-        spinHuesp=(Spinner) findViewById(R.id.cantSpinner);
+        agregar = (Button) findViewById(R.id.btnAgregarAlojamiento);
+        valor = (EditText) findViewById(R.id.ValoreditText);
+        descripcion = (EditText) findViewById(R.id.CiudadtextView);
+        spinTipo = (Spinner) findViewById(R.id.spinner);
+        spinCiudad = (Spinner) findViewById(R.id.Ciudadspinner);
+        spinHuesp = (Spinner) findViewById(R.id.cantSpinner);
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         database = FirebaseDatabase.getInstance();
-        imagenCarg=(ImageButton)findViewById(R.id.imagenCargada);
+        imagenCarg = (ImageButton) findViewById(R.id.imagenCargada);
         btnAgregarAlojamientoMapa = (ImageButton) findViewById(R.id.img_btn_map);
         //imagenCarg2=(ImageButton)findViewById(R.id.imagenCargada2);
         //imagenCarg3=(ImageButton)findViewById(R.id.imagenCargada3);
@@ -101,18 +109,28 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
         btnAgregarAlojamientoMapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(agregarAlojamientoActivity.this, AgregarAlojamientoMapaActivity.class);
-                startActivity(intent);
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+                try {
+                    Intent intent = builder.build(agregarAlojamientoActivity.this);
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+//                Intent intent = new Intent(agregarAlojamientoActivity.this, AgregarAlojamientoMapaActivity.class);
+//                startActivity(intent);
             }
         });
 
 
         agregar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String idAlojamiento=registrarAlojamientoDatabase();
-                if(!idAlojamiento.equals("")){
+                String idAlojamiento = registrarAlojamientoDatabase();
+                if (!idAlojamiento.equals("")) {
                     subirImagenStorage(idAlojamiento);
-                    Intent intent=new Intent(agregarAlojamientoActivity.this,buscarPropiedades.class);
+                    Intent intent = new Intent(agregarAlojamientoActivity.this, buscarPropiedades.class);
                     startActivity(intent);
                 }
             }
@@ -123,25 +141,27 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
         //Evento setOnClickListener - clic
         ibObtenerFecha.setOnClickListener(this);
     }
+
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.ib_obtener_fecha:
                 obtenerFecha();
                 break;
         }
     }
 
-    private void obtenerFecha(){
+    private void obtenerFecha() {
         DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 //Esta variable lo que realiza es aumentar en uno el mes ya que comienza desde 0 = enero
                 final int mesActual = month + 1;
                 //Formateo el día obtenido: antepone el 0 si son menores de 10
-                String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+                String diaFormateado = (dayOfMonth < 10) ? CERO + String.valueOf(dayOfMonth) : String.valueOf(dayOfMonth);
                 //Formateo el mes obtenido: antepone el 0 si son menores de 10
-                String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
+                String mesFormateado = (mesActual < 10) ? CERO + String.valueOf(mesActual) : String.valueOf(mesActual);
                 //Muestro la fecha con el formato deseado
                 etFecha.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
 
@@ -151,41 +171,46 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
             /**
              *También puede cargar los valores que usted desee
              */
-        },anio, mes, dia);
+        }, anio, mes, dia);
         //Muestro el widget
         recogerFecha.show();
 
     }
-    public String registrarAlojamientoDatabase(){
+
+    public String registrarAlojamientoDatabase() {
         String precio = valor.getText().toString().trim();
-        String dscp= descripcion.getText().toString();
-        String tipo=spinTipo.getSelectedItem().toString();
-        String ciudad=spinCiudad.getSelectedItem().toString();
-        String cant=spinHuesp.getSelectedItem().toString();
-        String fecha=etFecha.getText().toString();
-        Toast.makeText(this,"fecha:"+fecha,Toast.LENGTH_LONG).show();
-        if(TextUtils.isEmpty(precio)){
-            Toast.makeText(this,"Se debe ingresar un valor válido",Toast.LENGTH_LONG).show();
+        String dscp = descripcion.getText().toString();
+        String tipo = spinTipo.getSelectedItem().toString();
+        String ciudad = spinCiudad.getSelectedItem().toString();
+        String cant = spinHuesp.getSelectedItem().toString();
+        String fecha = etFecha.getText().toString();
+        Toast.makeText(this, "fecha:" + fecha, Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(precio)) {
+            Toast.makeText(this, "Se debe ingresar un valor válido", Toast.LENGTH_LONG).show();
             return "";
         }
-        if(TextUtils.isEmpty(dscp)){
-            Toast.makeText(this,"Se debe ingresar una descripcion",Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(dscp)) {
+            Toast.makeText(this, "Se debe ingresar una descripcion", Toast.LENGTH_LONG).show();
             return "";
         }
-        if(TextUtils.isEmpty(fecha)){
-            Toast.makeText(this,"Se debe ingresar una fecha inicial",Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(fecha)) {
+            Toast.makeText(this, "Se debe ingresar una fecha inicial", Toast.LENGTH_LONG).show();
+            return "";
+        }
+        if (ubicacionAlojamiento == null) {
+            Toast.makeText(this, "Se debe ingresar un alojamiento", Toast.LENGTH_LONG).show();
             return "";
         }
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        Alojamiento alojamiento=new Alojamiento(precio,dscp,tipo,ciudad,cant,user.getUid(),fecha);
+        Alojamiento alojamiento = new Alojamiento(precio, dscp, tipo, ciudad, cant, user.getUid(), fecha, ubicacionAlojamiento.latitude, ubicacionAlojamiento.longitude);
         myRef = database.getReference("alojamientos");
-        String idAloj=myRef.push().getKey();
+        String idAloj = myRef.push().getKey();
         myRef.child(idAloj).setValue(alojamiento);
         return idAloj;
     }
 
     //abrir la galeria de fotos del dispositivo
-    public void abrirGaleria(View v){
+    public void abrirGaleria(View v) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -196,8 +221,8 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
 
     //Re-escritura del metodo onActivity
     protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Uri selectedImageUri = null;
 
 
@@ -205,8 +230,8 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
         switch (requestCode) {
             case SELECT_FILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    selectedImage = imageReturnedIntent.getData();
-                    String selectedPath=selectedImage.getPath();
+                    selectedImage = data.getData();
+                    String selectedPath = selectedImage.getPath();
                     if (requestCode == SELECT_FILE) {
 
                         if (selectedPath != null) {
@@ -227,24 +252,31 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
                     }
                 }
                 break;
+            case PLACE_PICKER_REQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    Place place = PlacePicker.getPlace(this, data);
+                    String address = String.format("Place: %s", place.getAddress());
+                    Toast.makeText(this, address, Toast.LENGTH_SHORT).show();
+                    ubicacionAlojamiento = place.getLatLng();
+                }
+                break;
         }
     }
 
     //Metodo auxiliar para llamar uploadImage
-    public void subirImagenStorage(String idAlojamiento){
+    public void subirImagenStorage(String idAlojamiento) {
         uploadImage(idAlojamiento);
     }
 
     //agrega la imagen al storage con id del alojamiento como nombre
     public void uploadImage(String idAlojamiento) {
 
-        if(selectedImage != null)
-        {
+        if (selectedImage != null) {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/"+ idAlojamiento);
+            StorageReference ref = storageReference.child("images/" + idAlojamiento);
             ref.putFile(selectedImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -257,15 +289,15 @@ public class agregarAlojamientoActivity extends AppCompatActivity implements Vie
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(agregarAlojamientoActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(agregarAlojamientoActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
         }
