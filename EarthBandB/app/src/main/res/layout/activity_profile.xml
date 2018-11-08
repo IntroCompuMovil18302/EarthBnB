@@ -59,6 +59,7 @@
                     android:layout_width="210dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="#e2dfdf"
                     android:scaleType="fitCenter"
                     app:srcCompat="@mipmap/ic_support" />
             </LinearLayout>
@@ -97,6 +98,7 @@
                     android:layout_width="210dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="#e2dfdf"
                     android:scaleType="fitCenter"
                     app:srcCompat="@mipmap/ic_logout" />
             </LinearLayout>
@@ -134,6 +136,7 @@
                     android:layout_width="210dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="#e2dfdf"
                     android:scaleType="fitCenter"
                     app:srcCompat="@mipmap/ic_settings_round" />
             </LinearLayout>
@@ -171,6 +174,7 @@
                     android:layout_width="210dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="#e2dfdf"
                     android:scaleType="fitCenter"
                     app:srcCompat="@mipmap/ic_clients" />
             </LinearLayout>
@@ -206,6 +210,7 @@
                 <ImageButton
                     android:id="@+id/imgBtnReservas"
                     android:layout_width="210dp"
+                    android:background="#e2dfdf"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
@@ -243,6 +248,7 @@
                 <ImageButton
                     android:id="@+id/imgBtnAñadir"
                     android:layout_width="210dp"
+                    android:background="#e2dfdf"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
@@ -320,6 +326,7 @@
 
                 <ImageButton
                     android:id="@+id/imgBtnChat"
+                    android:background="#e2dfdf"
                     android:layout_width="180dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"

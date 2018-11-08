@@ -202,6 +202,7 @@
                 <ImageButton
                     android:id="@+id/imgBtnAñadir"
                     android:layout_width="210dp"
+                    android:background="#e2dfdf"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="fitCenter"
