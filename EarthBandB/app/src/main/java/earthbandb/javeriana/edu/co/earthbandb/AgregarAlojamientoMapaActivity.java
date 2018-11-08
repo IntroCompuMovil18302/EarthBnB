@@ -119,7 +119,7 @@ public class AgregarAlojamientoMapaActivity extends AppCompatActivity implements
         database = FirebaseDatabase.getInstance();
 
         // Callback de ubicación
-        /*callbackUbicacion = new LocationCallback() {
+        callbackUbicacion = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
@@ -153,7 +153,7 @@ public class AgregarAlojamientoMapaActivity extends AppCompatActivity implements
                     //Toast.makeText(MapsActivity.this,  String.valueOf(distance(location.getLatitude(),location.getLongitude(), 4.65, -74.05)), Toast.LENGTH_SHORT).show();
                 }
             }
-        };*/
+        };
 
         // Petición de permisos de localización
         solicitarPermiso();
@@ -164,7 +164,7 @@ public class AgregarAlojamientoMapaActivity extends AppCompatActivity implements
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        /*et_ubicacion_busqueda.setOnKeyListener(new View.OnKeyListener() {
+        et_ubicacion_busqueda.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
@@ -220,7 +220,7 @@ public class AgregarAlojamientoMapaActivity extends AppCompatActivity implements
                 }
                 return false;
             }
-        });*/
+        });
 
         //cargarUbicaciones();
 
