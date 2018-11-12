@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText et_apellido;
     private EditText et_correo;
     private EditText et_contrasena;
+
     private Button btn_registrarme;
     private Button btn_galeria;
     private Button btn_camara;
@@ -80,10 +80,11 @@ public class RegisterActivity extends AppCompatActivity {
         et_apellido = (EditText) findViewById(R.id.et_apellido);
         et_correo = (EditText) findViewById(R.id.et_correo);
         et_contrasena = (EditText) findViewById(R.id.et_contrasena);
+
         btn_registrarme = (Button) findViewById(R.id.btn_registrarme);
         btn_galeria = (Button) findViewById(R.id.btn_galeria);
         btn_camara = (Button) findViewById(R.id.btn_camara);
-        img_foto_perfil = (ImageView) findViewById(R.id.img_foto_perfil);
+        img_foto_perfil = (ImageView) findViewById(R.id.img_foto_perfil_cliente);
 
         // Inicialización de Firebase
         storage = FirebaseStorage.getInstance();

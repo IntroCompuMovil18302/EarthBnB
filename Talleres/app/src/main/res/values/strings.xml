@@ -4,9 +4,14 @@
     <!-- Hints -->
     <string name="hint_correo">Correo electrónico</string>
     <string name="hint_contrasena">Contraseña</string>
+    <string name="hint_confirmar_contrasena">Confirmar contraseña</string>
     <string name="hint_nombre">Nombre</string>
     <string name="hint_apellido">Apellido</string>
     <string name="hint_direccion">Dirección</string>
+    <string name="hint_pais">País</string>
+    <string name="hint_ciudad">Ciudad</string>
+    <string name="hint_descripcion">Descripción</string>
+    <string name="hint_search_property">Buscar propiedad</string>
 
     <!-- Labels -->
     <string name="label_iniciar_sesion">Iniciar sesión</string>
@@ -14,6 +19,8 @@
     <string name="label_galeria">Galeria</string>
     <string name="label_camara">Cámara</string>
     <string name="label_registrarme">Registrarme</string>
+    <string name="label_agregar_alojamiento">Agregar Alojamiento</string>
+    <string name="label_enviar">Enviar</string>
 
     <!-- Mensajes -->
     <string name="msg_error_autenticacion">Se ha producido un error al autenticarse</string>
@@ -23,6 +30,38 @@
     <string name="menu_configuracion">Configuración</string>
     <string name="menu_perfil">Perfil</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Items de Spinners -->
+    <string-array name="tipo_array">
+        <item>Apartamento</item>
+        <item>Casa</item>
+        <item>Habitacion</item>
+        <item>Cabaña</item>
+    </string-array>
+
+    <string-array name="cant_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+
+    </string-array>
 
     <!-- <string name=""></string> -->
 </resources>
