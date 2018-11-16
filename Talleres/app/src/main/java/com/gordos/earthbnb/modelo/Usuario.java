@@ -4,8 +4,11 @@ public class Usuario {
 
     String nombre;
     String apellido;
-    String urlFoto;
+    Integer edad;
     String correo;
+    String urlFoto;
+    String tipo;
+    String idUsuario;
 
     public Usuario() {
     }
@@ -40,5 +43,29 @@ public class Usuario {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public Integer getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Integer edad) {
+        this.edad = edad;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }

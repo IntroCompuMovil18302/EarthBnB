@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
     // Constantes
     private static final String TAG = "Resultado: ";
     public static final String PATH_USUARIOS = "usuarios/";
+    public static final String PATH_FOTOS_PERFIL = "fotos-perfil/";
 
     // Autenticación con Firebase
     private FirebaseAuth mAuth;
@@ -64,10 +67,15 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText et_apellido;
     private EditText et_correo;
     private EditText et_contrasena;
+    private EditText et_edad;
 
     private Button btn_registrarme;
     private Button btn_galeria;
     private Button btn_camara;
+
+    private RadioGroup rg_tipo_usuario_grupo;
+    private RadioButton rb_tipo_usuario_boton;
+
     private ImageView img_foto_perfil;
 
     @Override
@@ -80,10 +88,14 @@ public class RegisterActivity extends AppCompatActivity {
         et_apellido = (EditText) findViewById(R.id.et_apellido);
         et_correo = (EditText) findViewById(R.id.et_correo);
         et_contrasena = (EditText) findViewById(R.id.et_contrasena);
+        et_edad = (EditText) findViewById(R.id.et_edad);
 
         btn_registrarme = (Button) findViewById(R.id.btn_registrarme);
         btn_galeria = (Button) findViewById(R.id.btn_galeria);
         btn_camara = (Button) findViewById(R.id.btn_camara);
+
+        rg_tipo_usuario_grupo = (RadioGroup) findViewById(R.id.rg_tipo_usuario);
+
         img_foto_perfil = (ImageView) findViewById(R.id.img_foto_perfil_cliente);
 
         // Inicialización de Firebase
@@ -168,6 +180,8 @@ public class RegisterActivity extends AppCompatActivity {
      */
     private boolean validateForm() {
         boolean valido = true;
+
+        // Validación correo
         String correo = et_correo.getText().toString();
         if (TextUtils.isEmpty(correo)) {
             et_correo.setError("¡Este campo es requerido!");
@@ -178,6 +192,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             et_correo.setError(null);
         }
+
+        // Validación contraseña
         String contrasena = et_contrasena.getText().toString();
         if (TextUtils.isEmpty(contrasena)) {
             et_contrasena.setError("¡Este campo es requerido!");
@@ -185,6 +201,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             et_contrasena.setError(null);
         }
+
+        // Validación nombre
         String nombre = et_nombre.getText().toString();
         if (TextUtils.isEmpty(nombre)) {
             et_nombre.setError("¡Este campo es requerido!");
@@ -192,6 +210,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             et_nombre.setError(null);
         }
+
+        // Validación apellido
         String apellido = et_apellido.getText().toString();
         if (TextUtils.isEmpty(apellido)) {
             et_apellido.setError("¡Este campo es requerido!");
@@ -199,6 +219,21 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             et_apellido.setError(null);
         }
+
+        // Validación edad
+        String edad = et_edad.getText().toString();
+        if (TextUtils.isEmpty(edad)) {
+            et_edad.setError("¡Este campo es requerido!");
+            valido = false;
+        } else {
+            et_edad.setError(null);
+        }
+
+        // Validación tipo usuario
+        int tipoUsuarioSeleccionado = rg_tipo_usuario_grupo.getCheckedRadioButtonId();
+        rb_tipo_usuario_boton = (RadioButton) findViewById(tipoUsuarioSeleccionado);
+        Log.i(TAG, rb_tipo_usuario_boton.getText().toString());
+
         return valido;
     }
 
@@ -214,25 +249,29 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     /**
-     * Método que realiza el inicio de sesión de un usuario.
+     * Método que registra un nuevo usuario
      */
     protected void registrarUsuario() {
         if (validateForm()) {
             final String correo = et_correo.getText().toString();
             String contrasena = et_contrasena.getText().toString();
+
             mAuth.createUserWithEmailAndPassword(correo, contrasena).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+
                         String nombre = et_nombre.getText().toString();
                         String apellido = et_apellido.getText().toString();
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
+
                             UserProfileChangeRequest.Builder upcrb = new UserProfileChangeRequest.Builder();
                             upcrb.setDisplayName(nombre + " " + apellido);
 
-                            imageRef = storageRef.child(correo + ".jpg");
+                            imageRef = storageRef.child(PATH_FOTOS_PERFIL + user.getUid() + ".jpg");
 
                             Bitmap bitmap = ((BitmapDrawable) img_foto_perfil.getDrawable()).getBitmap();
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -252,7 +291,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 }
                             });
 
-                            String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + correo + ".jpg";
+                            String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + PATH_FOTOS_PERFIL + user.getUid() + ".jpg";
                             upcrb.setPhotoUri(Uri.parse(urlImg));
 
                             // Agregar usuario a la base de datos
@@ -261,6 +300,11 @@ public class RegisterActivity extends AppCompatActivity {
                             nuevoUsuario.setApellido(et_apellido.getText().toString());
                             nuevoUsuario.setUrlFoto(urlImg);
                             nuevoUsuario.setCorreo(et_correo.getText().toString());
+                            nuevoUsuario.setEdad(Integer.parseInt(et_edad.getText().toString()));
+                            int tipoUsuarioSeleccionado = rg_tipo_usuario_grupo.getCheckedRadioButtonId();
+                            rb_tipo_usuario_boton = (RadioButton) findViewById(tipoUsuarioSeleccionado);
+                            nuevoUsuario.setTipo(rb_tipo_usuario_boton.getText().toString());
+                            nuevoUsuario.setIdUsuario(mAuth.getUid());
 
                             databaseRef = database.getReference("usuarios");
                             String key = databaseRef.push().getKey();

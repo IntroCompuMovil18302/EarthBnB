@@ -9,11 +9,16 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -75,7 +80,11 @@ import java.util.List;
 
 // LINK PIN HOME: https://www.flaticon.com/free-icon/home-location-marker_65433
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+
+    // Variables menu
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
 
     // Variables de permisos
     static final int PERMISO_GPS = 3;
@@ -228,6 +237,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        cargarMenu();
         cargarUbicaciones();
 
     }
@@ -236,12 +246,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
         iniciarActualizacionesUbicacion();
+        navigationView.setCheckedItem(R.id.nav_hospedajes);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         pararActualizacionesUbicacion();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+            moveTaskToBack(true);
+        }
     }
 
 
@@ -374,30 +395,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-    }
-
-    // Inflate de los elementos del menú
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu, menu);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem elemento) {
-        int elementoPresionado = elemento.getItemId();
-        if (elementoPresionado == R.id.menuCerrarSesion) {
-            mAuth.signOut();
-            Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        } else if (elementoPresionado == R.id.menuPerfil) {
-            Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(elemento);
     }
 
     // Solicitar permisos
@@ -612,6 +609,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.w(TAG, "Error en la consulta", databaseError.toException());
             }
         });
+    }
+
+    // Menu
+    private void cargarMenu() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MapsActivity.this, drawer, toolbar, R.string.nav_menu_abrir, R.string.nav_menu_cerrar);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        Intent intent;
+
+        switch (item.getItemId()) {
+            case R.id.nav_perfil:
+                intent = new Intent(MapsActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.nav_agregar_hospedaje:
+                break;
+
+            case R.id.nav_cerrar_sesion:
+                mAuth.signOut();
+                intent = new Intent(MapsActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
+                break;
+
+            default:
+                break;
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 
 }

@@ -12,6 +12,8 @@
     <string name="hint_ciudad">Ciudad</string>
     <string name="hint_descripcion">Descripción</string>
     <string name="hint_search_property">Buscar propiedad</string>
+    <string name="hint_edad">Edad</string>
+    <string name="hint_tipo_usuario">Tipo de usuario</string>
 
     <!-- Labels -->
     <string name="label_iniciar_sesion">Iniciar sesión</string>
@@ -21,6 +23,9 @@
     <string name="label_registrarme">Registrarme</string>
     <string name="label_agregar_alojamiento">Agregar Alojamiento</string>
     <string name="label_enviar">Enviar</string>
+    <string name="label_hueped">Huésped</string>
+    <string name="label_anfitrion">Anfitrión</string>
+    <string name="label_foto_perfil">Foto de perfil</string>
 
     <!-- Mensajes -->
     <string name="msg_error_autenticacion">Se ha producido un error al autenticarse</string>
@@ -29,7 +34,13 @@
     <string name="menu_cerrar_sesion">Cerrar sesión</string>
     <string name="menu_configuracion">Configuración</string>
     <string name="menu_perfil">Perfil</string>
+    <string name="menu_hospedajes">Buscar hospedajes</string>
+    <string name="menu_agregar_hospedaje">Agregar hospedaje</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Opciones del menú hamburguesa/navegación -->
+    <string name="nav_menu_abrir">Abrir menu de navegación</string>
+    <string name="nav_menu_cerrar">Cerrar menu de navegación</string>
 
     <!-- Items de Spinners -->
     <string-array name="tipo_array">

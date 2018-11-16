@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/ic_perfil"
+            android:title="@string/menu_perfil" />
+        <item
+            android:id="@+id/nav_hospedajes"
+            android:icon="@drawable/ic_hospedajes"
+            android:title="@string/menu_hospedajes" />
+        <item
+            android:id="@+id/nav_agregar_hospedaje"
+            android:icon="@drawable/ic_agregar_hospedaje"
+            android:title="@string/menu_agregar_hospedaje" />
+        <item
+            android:id="@+id/nav_cerrar_sesion"
+            android:icon="@drawable/ic_cerrar_sesion"
+            android:title="@string/menu_cerrar_sesion" />
+    </group>
+
+</menu>
