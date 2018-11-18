@@ -63,6 +63,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.gordos.earthbnb.modelo.Alojamiento;
 import com.gordos.earthbnb.modelo.Ubicacion;
 
 import org.json.JSONException;
@@ -114,6 +115,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Constantes
     private static final String TAG = "Resultado: ";
     private static final String PATH_UBICACIONES = "locations";
+    private static final String PATH_ALOJAMIENTOS = "alojamientos/";
     static final int RADIO_DE_LA_TIERRA = 6371;
 
     @Override
@@ -585,20 +587,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Cargar JSON
     public void cargarUbicaciones() {
-        databaseRef = database.getReference(PATH_UBICACIONES);
+        databaseRef = database.getReference(PATH_ALOJAMIENTOS);
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    Ubicacion nuevaUbicacion = singleSnapshot.getValue(Ubicacion.class);
-                    Log.i(TAG, nuevaUbicacion.getName());
+                    Alojamiento nuevoAlojamiento = singleSnapshot.getValue(Alojamiento.class);
+//                    Ubicacion nuevaUbicacion = singleSnapshot.getValue(Ubicacion.class);
+                    Log.i(TAG, nuevoAlojamiento.getTipo());
 
                     mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(nuevaUbicacion.getLatitude(), nuevaUbicacion.getLongitude()))
-                            .title(nuevaUbicacion.getName())
-                            .alpha(0.5f).icon(BitmapDescriptorFactory
+                            .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
+                            .title(nuevoAlojamiento.getTipo())
+                            .snippet(nuevoAlojamiento.getDescripcion())
+                            .alpha(0.75f).icon(BitmapDescriptorFactory
                                     .defaultMarker(
-                                            BitmapDescriptorFactory.HUE_ORANGE
+                                            BitmapDescriptorFactory.HUE_CYAN
                                     )));
 
                 }
@@ -631,12 +635,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent;
 
         switch (item.getItemId()) {
+
+            case R.id.nav_hospedajes:
+                break;
+
             case R.id.nav_perfil:
                 intent = new Intent(MapsActivity.this, ProfileActivity.class);
                 startActivity(intent);
                 break;
 
-            case R.id.nav_agregar_hospedaje:
+            case R.id.nav_agregar_alojamiento:
+                intent = new Intent(MapsActivity.this, AgregarAlojamientoActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.nav_cerrar_sesion:

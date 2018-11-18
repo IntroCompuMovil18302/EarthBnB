@@ -10,5 +10,9 @@
         android:topLeftRadius="5dp"
         android:topRightRadius="5dp" />
 
-    <stroke android:width="5px" android:color="#FFFFFF" />
+    <size
+        android:width="50dp" />
+
+
+    <stroke android:width="2px" android:color="@android:color/background_light" />
 </shape>

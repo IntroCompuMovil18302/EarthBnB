@@ -273,9 +273,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                             imageRef = storageRef.child(PATH_FOTOS_PERFIL + user.getUid() + ".jpg");
 
+
                             Bitmap bitmap = ((BitmapDrawable) img_foto_perfil.getDrawable()).getBitmap();
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
                             byte[] data = baos.toByteArray();
 
                             UploadTask uploadTask = imageRef.putBytes(data);
@@ -307,11 +308,10 @@ public class RegisterActivity extends AppCompatActivity {
                             nuevoUsuario.setIdUsuario(mAuth.getUid());
 
                             databaseRef = database.getReference("usuarios");
-                            String key = databaseRef.push().getKey();
+//                            String key = databaseRef.push().getKey();
+                            String key = mAuth.getUid();
                             databaseRef = database.getReference(PATH_USUARIOS + key);
                             databaseRef.setValue(nuevoUsuario);
-
-                            Toast.makeText(RegisterActivity.this, key, Toast.LENGTH_SHORT).show();
 
                             user.updateProfile(upcrb.build()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -435,9 +435,6 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-
-                } else {
-//                    Toast.makeText(this, "No hay acceso al almacenamiento", Toast.LENGTH_LONG).show();
                 }
                 return;
             }

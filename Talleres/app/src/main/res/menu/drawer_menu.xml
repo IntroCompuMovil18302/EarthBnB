@@ -13,8 +13,8 @@
             android:icon="@drawable/ic_hospedajes"
             android:title="@string/menu_hospedajes" />
         <item
-            android:id="@+id/nav_agregar_hospedaje"
-            android:icon="@drawable/ic_agregar_hospedaje"
+            android:id="@+id/nav_agregar_alojamiento"
+            android:icon="@drawable/ic_agregar_alojamiento"
             android:title="@string/menu_agregar_hospedaje" />
         <item
             android:id="@+id/nav_cerrar_sesion"

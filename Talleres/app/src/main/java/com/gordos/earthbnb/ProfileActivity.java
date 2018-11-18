@@ -24,13 +24,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.gordos.earthbnb.modelo.Ubicacion;
+import com.gordos.earthbnb.modelo.Usuario;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -39,10 +50,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private NavigationView navigationView;
 
     // Constantes
+    public static final String PATH_USUARIOS = "usuarios/";
     public static final String PATH_FOTOS_PERFIL = "fotos-perfil/";
 
     // Autenticación con Firebase
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference databaseRef;
 
     // Constantes
     private static final String TAG = "Resultado: ";
@@ -84,16 +98,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
 
         // Inicialización de variables locales
         usuario = mAuth.getCurrentUser();
 
         if(usuario != null){
-
-            if(tv_nombre != null )
-                tv_nombre.setText(usuario.getDisplayName());
-            if(tv_correo != null)
-                tv_correo.setText(usuario.getEmail());
 
             if(usuario.getPhotoUrl() != null){
 
@@ -123,6 +133,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
         cargarMenu();
+        cargarUsuario();
     }
 
     // Inflate de los elementos del menú
@@ -144,7 +155,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         Bitmap roundedImageBitmap = Bitmap.createBitmap(newBitmapSquareWidthImage,newBitmapSquareWidthImage,Bitmap.Config.ARGB_8888);
         Canvas mcanvas = new Canvas(roundedImageBitmap);
-        mcanvas.drawColor(Color.RED);
+        mcanvas.drawColor(Color.WHITE);
         int i = borderWidthHalfImage + bitmapSquareWidthImage - bitmapWidthImage;
         int j = borderWidthHalfImage + bitmapSquareWidthImage - bitmapHeightImage;
 
@@ -153,7 +164,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         Paint borderImagePaint = new Paint();
         borderImagePaint.setStyle(Paint.Style.STROKE);
         borderImagePaint.setStrokeWidth(borderWidthHalfImage*2);
-        borderImagePaint.setColor(Color.GRAY);
+        borderImagePaint.setColor(Color.WHITE);
         mcanvas.drawCircle(mcanvas.getWidth()/2, mcanvas.getWidth()/2, newBitmapSquareWidthImage/2, borderImagePaint);
 
         RoundedBitmapDrawable roundedImageBitmapDrawable = RoundedBitmapDrawableFactory.create(mResources,roundedImageBitmap);
@@ -188,7 +199,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(intent);
                 break;
 
-            case R.id.nav_agregar_hospedaje:
+            case R.id.nav_agregar_alojamiento:
+                intent = new Intent(ProfileActivity.this, AgregarAlojamientoActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.nav_cerrar_sesion:
@@ -215,5 +228,29 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         } else {
             super.onBackPressed();
         }
+    }
+
+    // Cargar usuario
+    // Cargar JSON
+    public void cargarUsuario() {
+        databaseRef = database.getReference(PATH_USUARIOS + mAuth.getUid());
+        databaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Usuario usuarioActual = dataSnapshot.getValue(Usuario.class);
+
+                tv_nombre.setText(usuarioActual.getNombre());
+                tv_apellido.setText(usuarioActual.getApellido());
+                tv_correo.setText(usuarioActual.getCorreo());
+                tv_tipo_usuario.setText(usuarioActual.getTipo());
+                tv_edad.setText(usuarioActual.getEdad().toString());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "Error en la consulta", databaseError.toException());
+            }
+        });
     }
 }
