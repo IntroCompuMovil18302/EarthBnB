@@ -12,6 +12,8 @@
     <string name="hint_ciudad">Ciudad</string>
     <string name="hint_descripcion">Descripción</string>
     <string name="hint_search_property">Buscar propiedad</string>
+    <string name="hint_edad">Edad</string>
+    <string name="hint_tipo_usuario">Tipo de usuario</string>
 
     <!-- Labels -->
     <string name="label_iniciar_sesion">Iniciar sesión</string>
@@ -21,6 +23,32 @@
     <string name="label_registrarme">Registrarme</string>
     <string name="label_agregar_alojamiento">Agregar Alojamiento</string>
     <string name="label_enviar">Enviar</string>
+    <string name="label_hueped">Huésped</string>
+    <string name="label_anfitrion">Anfitrión</string>
+    <string name="label_foto_perfil">Foto de perfil</string>
+    <string name="label_seleccionar_ubicacion">Selecciona una ubicación</string>
+
+    <string name="label_numero_huspedes">Cantidad de huéspedes</string>
+    <string name="label_numero_camas">Cantidad de camas</string>
+    <string name="label_numero_banos">Cantidad de baños</string>
+    <string name="label_numero_habitaciones">Cantidad de habitaciones</string>
+    <string name="label_bano_privado">¿El baño es privado?</string>
+    <string name="label_wifi">Wifi</string>
+    <string name="label_tv">TV</string>
+    <string name="label_armario">Armario</string>
+    <string name="label_escritorio">Escritorio</string>
+    <string name="label_desayuno">Desayuno</string>
+    <string name="label_acceso_cocina">Acceso a la cocina</string>
+    <string name="label_elementos_basicos">Elementos basicos</string>
+    <string name="label_agregar_fotos">Agregar fotos</string>
+    <string name="label_elementos_basicos_descripcion">Elementos básicos: Toallas, sábanas, jabón, papel higiénico, almohadas, crema dental, café</string>
+    <string name="label_fecha_inicio">Escoger fecha de inicio</string>
+    <string name="label_fecha_fin">Escoger fecha final</string>
+    <string name="label_descripcion">Descripción</string>
+    <string name="label_desde">Desde</string>
+    <string name="label_hasta">Hasta</string>
+
+    <string name="label_filtrar_fecha">Filtrar por fecha</string>
 
     <!-- Mensajes -->
     <string name="msg_error_autenticacion">Se ha producido un error al autenticarse</string>
@@ -29,7 +57,13 @@
     <string name="menu_cerrar_sesion">Cerrar sesión</string>
     <string name="menu_configuracion">Configuración</string>
     <string name="menu_perfil">Perfil</string>
+    <string name="menu_hospedajes">Buscar hospedajes</string>
+    <string name="menu_agregar_hospedaje">Agregar hospedaje</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Opciones del menú hamburguesa/navegación -->
+    <string name="nav_menu_abrir">Abrir menu de navegación</string>
+    <string name="nav_menu_cerrar">Cerrar menu de navegación</string>
 
     <!-- Items de Spinners -->
     <string-array name="tipo_array">

@@ -1,151 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient2"
-    tools:context=".ProfileActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".ProfileActivity"
+    tools:openDrawer="">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        android:orientation="vertical">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/background_gradient2"
+            tools:context=".ProfileActivity">
 
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="231dp"
-                android:layout_height="231dp"
-                android:layout_marginEnd="8dp"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="60dp"
+                android:layout_height="?attr/actionBarSize"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="76dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.504"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/usuario" />
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-            <Button
-                android:id="@+id/btn_edit_profile"
-                android:layout_width="50dp"
-                android:layout_height="49dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@android:drawable/ic_menu_edit"
-                app:layout_constraintBottom_toTopOf="@+id/imageView8"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <Button
-                android:id="@+id/btn_back"
-                android:layout_width="49dp"
-                android:layout_height="46dp"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="?android:attr/actionModeCloseDrawable"
-                android:backgroundTint="#ffffff"
-                app:layout_constraintBottom_toTopOf="@+id/imageView8"
-                app:layout_constraintEnd_toStartOf="@+id/btn_edit_profile"
-                app:layout_constraintHorizontal_bias="0.033"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/tw_city_country"
-                android:layout_width="194dp"
-                android:layout_height="34dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:hint="Ciudad,País"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tw_name" />
-
-            <TextView
-                android:id="@+id/tw_member"
-                android:layout_width="190dp"
-                android:layout_height="30dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:hint="Miembro desde..."
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tw_birthday" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
 
-            <TextView
-                android:id="@+id/tw_birthday"
-                android:layout_width="227dp"
-                android:layout_height="38dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:hint="Fecha de nacimiento"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.632"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tw_sex" />
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tw_sex"
-                android:layout_width="190dp"
-                android:layout_height="33dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
-                android:hint="Género"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tw_city_country" />
+                    <Button
+                        android:id="@+id/btn_edit_profile"
+                        android:layout_width="50dp"
+                        android:layout_height="49dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@android:drawable/ic_menu_edit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tw_name"
-                android:layout_width="196dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
-                android:hint="Nombre"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_edit_profile">
+
+                        <ImageView
+                            android:id="@+id/img_usuario_foto_perfil"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.504"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@mipmap/img_foto_perfil_defecto" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_nombre_perfil"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:hint="@string/hint_nombre"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                                android:textSize="30sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/img_usuario_foto_perfil" />
+
+                            <TextView
+                                android:id="@+id/tv_apellido_perfil"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:hint="@string/hint_apellido"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                                android:textSize="24sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_nombre_perfil" />
+
+                            <TextView
+                                android:id="@+id/tv_correo_perfil"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:hint="@string/hint_correo"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.503"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_apellido_perfil" />
+
+                            <TextView
+                                android:id="@+id/tv_tipo_usuario_perfil"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:hint="@string/hint_tipo_usuario"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_edad_perfil" />
+
+                            <TextView
+                                android:id="@+id/tv_edad_perfil"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:hint="@string/hint_edad"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_correo_perfil" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </android.support.constraint.ConstraintLayout>
+            </ScrollView>
+
         </android.support.constraint.ConstraintLayout>
-    </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu" />
+
+</android.support.v4.widget.DrawerLayout>

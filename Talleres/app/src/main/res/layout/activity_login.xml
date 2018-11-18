@@ -8,7 +8,7 @@
     tools:context=".LoginActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
@@ -18,9 +18,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="96dp"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark"
             android:ems="10"
             android:hint="@string/hint_correo"
             android:inputType="textPersonName"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textColorHint="#aaaaaa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,16 +48,19 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="36dp"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark"
             android:ems="10"
             android:hint="@string/hint_contrasena"
             android:inputType="textPersonName"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textColorHint="#aaaaaa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_correo" />
 
         <LinearLayout
-            android:layout_width="356dp"
+            android:layout_width="0dp"
             android:layout_height="59dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
@@ -72,8 +78,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/bordes_redondeados"
                 android:text="@string/label_iniciar_sesion"
-                android:textStyle="bold"
                 android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="128dp"
                 tools:layout_editor_absoluteY="335dp" />
 
@@ -84,8 +90,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/bordes_redondeados"
                 android:text="@string/label_registrarse"
-                android:textStyle="bold"
                 android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="262dp"
                 tools:layout_editor_absoluteY="407dp" />
         </LinearLayout>
