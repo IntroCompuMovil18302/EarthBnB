@@ -1,5 +1,6 @@
 package com.gordos.earthbnb;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -27,7 +28,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +52,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -76,6 +82,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,80 +104,91 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Google Maps
     private GoogleMap mMap;
+    private CircleOptions circleOptions;
+    private Circle circle;
 
     // Variables de localización
-    private FusedLocationProviderClient ubicacionCliente;
-    private LocationRequest solicitudUbicacion;
-    private LocationCallback callbackUbicacion;
     private Marker ubicacionActual;
-    private Marker ubicacionDestino;
     private MarkerOptions ubicacionActualInfo;
-    private MarkerOptions ubicacionDestinoInfo;
-    private Geocoder mGeocoder;
-    private Polyline ruta;
 
     // Variables de los elementos visuales
     private EditText et_ubicacion_busqueda;
+    private TextView tv_desde;
+    private TextView tv_hasta;
+    private ImageButton btn_fecha_desde;
+    private ImageButton btn_fecha_hasta;
+    private Button btn_filtrar_fecha;
 
     // Constantes
     private static final String TAG = "Resultado: ";
-    private static final String PATH_UBICACIONES = "locations";
     private static final String PATH_ALOJAMIENTOS = "alojamientos/";
     static final int RADIO_DE_LA_TIERRA = 6371;
+    private static final String CERO = "0";
+    private static final String BARRA = "/";
+
+    // Calendario para obtener fecha & hora
+    public final Calendar c = Calendar.getInstance();
+
+    // Variables para obtener la fecha
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
+
+    // Variables locales
+    private boolean esFechaInicio;
+    private long fechaInicio;
+    private long fechafin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
+
+        esFechaInicio = true;
+        fechaInicio = -1;
+        fechafin = -1;
+
         // Inicialización de los elementos visuales
         et_ubicacion_busqueda = (EditText) findViewById(R.id.et_ubicacion_busqueda);
+        tv_desde = (TextView) findViewById(R.id.tv_desde);
+        tv_hasta = (TextView) findViewById(R.id.tv_hasta);
+        btn_fecha_desde = (ImageButton) findViewById(R.id.btn_fecha_desde);
+        btn_fecha_hasta = (ImageButton) findViewById(R.id.btn_fecha_hasta);
+        btn_filtrar_fecha = (Button) findViewById(R.id.btn_filtrar_fecha);
+
+        btn_fecha_desde.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                esFechaInicio = true;
+                obtenerFecha();
+            }
+        });
+
+        btn_fecha_hasta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                esFechaInicio = false;
+                obtenerFecha();
+            }
+        });
+
+        btn_filtrar_fecha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarUbicacionesFiltros();
+            }
+        });
 
         // Inicialización de la ubicación
-        ubicacionCliente = LocationServices.getFusedLocationProviderClient(this);
-        solicitudUbicacion = crearSolicitudUbicacion();
         final Geocoder mGeocoder = new Geocoder(getBaseContext());
 
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
-        // Callback de ubicación
-        callbackUbicacion = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                Log.i("LOCATION", "Location update in the callback: " + location);
-                if (location != null) {
-                    // Actualiza el pin a la ubicación actual del usuario
-                    LatLng ubicacionActualUsuario = new LatLng(location.getLatitude(), location.getLongitude());
-                    ubicacionActual.remove();
-                    ubicacionActualInfo = new MarkerOptions()
-                            .position(ubicacionActualUsuario)
-                            .title("Tú")
-                            .snippet("estás aquí") //Texto de información
-                            .alpha(0.5f).icon(BitmapDescriptorFactory
-                                    .fromResource(R.drawable.home_location_marker));
-                    ubicacionActual = mMap.addMarker(ubicacionActualInfo);
-
-                    if (ubicacionDestino != null) {
-                        LatLng centro = new LatLng(
-                                (ubicacionActualInfo.getPosition().latitude + ubicacionDestinoInfo.getPosition().latitude) / 2,
-                                (ubicacionActualInfo.getPosition().longitude + ubicacionDestinoInfo.getPosition().longitude) / 2
-                        );
-                        String url = getRequestUrl(ubicacionActualInfo.getPosition(), ubicacionDestinoInfo.getPosition());
-                        TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                        taskRequestDirections.execute(url);
-//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(centro));
-//                        mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
-                    } else {
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(ubicacionActualUsuario));
-                    }
-
-                    //Toast.makeText(MapsActivity.this,  String.valueOf(distance(location.getLatitude(),location.getLongitude(), 4.65, -74.05)), Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
 
         // Petición de permisos de localización
         solicitarPermiso();
@@ -194,35 +212,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 LatLng position = new LatLng(addressResult.getLatitude(), addressResult.getLongitude());
                                 if (mMap != null) {
                                     //Agregar Marcador al mapa
-                                    if (ubicacionDestino != null) {
-                                        ubicacionDestino.remove();
+                                    if (ubicacionActual != null) {
+                                        ubicacionActual.remove();
                                     }
-                                    ubicacionDestinoInfo = new MarkerOptions()
+
+                                    mMap.clear();
+
+                                    ubicacionActualInfo = new MarkerOptions()
                                             .position(position)
                                             .title(et_ubicacion_busqueda.getText().toString())
-                                            .snippet("A " + distance(
-                                                    ubicacionActualInfo.getPosition().latitude,
-                                                    ubicacionActualInfo.getPosition().longitude,
-                                                    position.latitude,
-                                                    position.longitude
-                                            ) + " km de distancia") //Texto de información
-                                            .alpha(0.5f).icon(BitmapDescriptorFactory
-                                                    .defaultMarker(
-                                                            BitmapDescriptorFactory.HUE_VIOLET
-                                                    ));
-                                    ubicacionDestino = mMap.addMarker(ubicacionDestinoInfo);
-
-                                    // Pinta la ruta
-                                    String url = getRequestUrl(ubicacionActualInfo.getPosition(), ubicacionDestinoInfo.getPosition());
-                                    TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
-                                    taskRequestDirections.execute(url);
-
-                                    LatLng centro = new LatLng(
-                                            (ubicacionActualInfo.getPosition().latitude + ubicacionDestinoInfo.getPosition().latitude) / 2,
-                                            (ubicacionActualInfo.getPosition().longitude + ubicacionDestinoInfo.getPosition().longitude) / 2
-                                    );
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(centro));
+                                            .snippet("Estás buscando sitios cerca de aquí") //Texto de información
+                                            .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
+                                    ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                                     mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+
+                                    circle.remove();
+
+                                    circleOptions = new CircleOptions()
+                                            .center(position)
+                                            .radius(2000) //metros
+                                            .strokeWidth(3)
+                                            .strokeColor(Color.BLACK)
+                                            .fillColor(Color.argb(32, 0, 0, 0))
+                                            .clickable(true);
+
+                                    circle = mMap.addCircle(circleOptions);
+
+                                    cargarUbicaciones();
                                 }
                             } else {
                                 Toast.makeText(MapsActivity.this, "Dirección no encontrada", Toast.LENGTH_SHORT).show();
@@ -247,14 +264,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-        iniciarActualizacionesUbicacion();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
         navigationView.setCheckedItem(R.id.nav_hospedajes);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        pararActualizacionesUbicacion();
+        if (mMap != null) {
+            mMap.clear();
+            obtenerUbicacionActual();
+            cargarUbicaciones();
+        }
     }
 
     @Override
@@ -281,6 +299,49 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                if(!marker.equals(ubicacionActual)){
+                    Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
+                    intent.putExtra("alojamiento", ((Alojamiento) marker.getTag()).getIdAlojamiento());
+                    startActivity(intent);
+                }
+            }
+        });
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+
+                ubicacionActual.remove();
+                mMap.clear();
+
+                ubicacionActualInfo = new MarkerOptions()
+                        .position(latLng)
+                        .title("Tú")
+                        .snippet("Estás aquí") //Texto de información
+                        .alpha(1f)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
+
+                ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+
+                circle.remove();
+
+                circleOptions = new CircleOptions()
+                        .center(latLng)
+                        .radius(2000) //metros
+                        .strokeWidth(3)
+                        .strokeColor(Color.BLACK)
+                        .fillColor(Color.argb(32, 0, 0, 0))
+                        .clickable(true);
+
+                circle = mMap.addCircle(circleOptions);
+
+                cargarUbicaciones();
+            }
+        });
+
         // Se añade el estilo del mapa
         mMap.setMapStyle(MapStyleOptions
                 .loadRawResourceStyle(this, R.raw.style_json));
@@ -291,49 +352,107 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .position(ciudad)
                 .title("BOGOTÁ")
                 .snippet("Población: 8.081.000") //Texto de información
-                .alpha(0.5f)
-                .icon(BitmapDescriptorFactory
-                        .fromResource(R.drawable.home_location_marker));
+                .alpha(1f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
         ubicacionActual = mMap.addMarker(ubicacionActualInfo);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ciudad));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+        circleOptions = new CircleOptions()
+                .center(ciudad)
+                .radius(2000) //metros
+                .strokeWidth(3)
+                .strokeColor(Color.BLACK)
+                .fillColor(Color.argb(32, 0, 0, 0))
+                .clickable(true);
+
+        circle = mMap.addCircle(circleOptions);
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            mMap.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
+            mMap.setPadding(0, 0, 8, 8);
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                LatLng posicionActual = new LatLng(location.getLatitude(), location.getLongitude());
+
+                                ubicacionActual.remove();
+
+                                ubicacionActualInfo = new MarkerOptions()
+                                        .position(posicionActual)
+                                        .title("Tú")
+                                        .snippet("Estás aquí") //Texto de información
+                                        .alpha(1f)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
+
+                                ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(posicionActual));
+                                mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+
+                                circle.remove();
+
+                                circleOptions = new CircleOptions()
+                                        .center(posicionActual)
+                                        .radius(2000) //metros
+                                        .strokeWidth(3)
+                                        .strokeColor(Color.BLACK)
+                                        .fillColor(Color.argb(32, 0, 0, 0))
+                                        .clickable(true);
+
+                                circle = mMap.addCircle(circleOptions);
+
+                            }
+                        }
+                    });
         }
+    }
+
+    // Cargar fecha
+    private void obtenerFecha() {
+        DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                //Esta variable lo que realiza es aumentar en uno el mes ya que comienza desde 0 = enero
+                final int mesActual = month + 1;
+                //Formateo el día obtenido: antepone el 0 si son menores de 10
+                String diaFormateado = (dayOfMonth < 10) ? CERO + String.valueOf(dayOfMonth) : String.valueOf(dayOfMonth);
+                //Formateo el mes obtenido: antepone el 0 si son menores de 10
+                String mesFormateado = (mesActual < 10) ? CERO + String.valueOf(mesActual) : String.valueOf(mesActual);
+                //Muestro la fecha con el formato deseado
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month);
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+
+                if (esFechaInicio) {
+                    tv_desde.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    cal.add(Calendar.DATE, -1);
+                    fechaInicio = cal.getTimeInMillis();
+                } else {
+                    tv_hasta.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    cal.add(Calendar.DATE, 1);
+                    fechafin = cal.getTimeInMillis();
+                }
+
+            }
+            //Estos valores deben ir en ese orden, de lo contrario no mostrara la fecha actual
+        }, anio, mes, dia);
+        //Muestro el widget
+        recogerFecha.show();
+
     }
 
     // Configuración de lozalización
-
-    /**
-     * Finaliza la actualización de la posición de la ubicación del usuario
-     */
-    private void pararActualizacionesUbicacion() {
-        //Verificación de permiso!!
-        ubicacionCliente.removeLocationUpdates(callbackUbicacion);
-    }
-
-    /**
-     * Inicia la actualización de la posición de la ubicación del usuario
-     */
-    private void iniciarActualizacionesUbicacion() {
-        //Verificación de permiso!!
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            ubicacionCliente.requestLocationUpdates(solicitudUbicacion, callbackUbicacion, null);
-        }
-    }
-
-    /**
-     * Solicitta la ubicación cada cierto tiempo
-     *
-     * @return LocationReques : Ubicación actual del usuario
-     */
-    protected LocationRequest crearSolicitudUbicacion() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000); //tasa de refresco en milisegundos
-        mLocationRequest.setFastestInterval(5000); //máxima tasa de refresco
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
-    }
 
     /**
      * Determina la distancia del usuario con respecto a otro punto
@@ -364,38 +483,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i("ERROR:", "NO TIENE PERMISO");
         } else {
-            LocationSettingsRequest.Builder builder = new
-                    LocationSettingsRequest.Builder().addLocationRequest(solicitudUbicacion);
-            SettingsClient client = LocationServices.getSettingsClient(this);
-            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+            obtenerUbicacionActual();
+        }
+    }
 
-            task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-                @Override
-                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                    iniciarActualizacionesUbicacion(); //Todas las condiciones para recibir localizaciones
-                }
-            });
+    private void obtenerUbicacionActual() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (mMap != null) {
+                mMap.setMyLocationEnabled(true);
+                mMap.setPadding(0, 0, 8, 8);
+                FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-            task.addOnFailureListener(this, new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    int statusCode = ((ApiException) e).getStatusCode();
-                    switch (statusCode) {
-                        case CommonStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied, but this can be fixed by showing the user a dialog.
-                            try {// Show the dialog by calling startResolutionForResult(), and check the result in onActivityResult().
-                                ResolvableApiException resolvable = (ResolvableApiException) e;
-                                resolvable.startResolutionForResult(MapsActivity.this, PERMISO_GPS);
-                            } catch (IntentSender.SendIntentException sendEx) {
-                                // Ignore the error.
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    LatLng posicionActual = new LatLng(location.getLatitude(), location.getLongitude());
+
+                                    ubicacionActual.remove();
+
+                                    ubicacionActualInfo = new MarkerOptions()
+                                            .position(posicionActual)
+                                            .title("Tú")
+                                            .snippet("Estás aquí") //Texto de información
+                                            .alpha(1f)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
+
+                                    ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(posicionActual));
+                                    mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+
+                                    circle.remove();
+
+                                    circleOptions = new CircleOptions()
+                                            .center(posicionActual)
+                                            .radius(2000) //metros
+                                            .strokeWidth(3)
+                                            .strokeColor(Color.BLACK)
+                                            .fillColor(Color.argb(32, 0, 0, 0))
+                                            .clickable(true);
+
+                                    circle = mMap.addCircle(circleOptions);
+
+                                }
                             }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. No way to fix the settings so we won't show the dialog.
-                            break;
-                    }
-                }
-            });
+                        });
+            }
         }
     }
 
@@ -429,9 +564,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
-//                    mMap.setMyLocationEnabled(true);
-                    iniciarActualizacionesUbicacion();
-//                    Log.i("Mensaje:", "Permiso concedido");
+
+                    obtenerUbicacionActual();
+
                 } else {
                     // permission denied, disable functionality that depends on this permission.
                     Log.i("Mensaje:", "Permiso denegado");
@@ -448,139 +583,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (requestCode) {
             case PERMISO_GPS: {
                 if (resultCode == RESULT_OK) {
-                    iniciarActualizacionesUbicacion(); //Se encendió la localización!!!
+                    obtenerUbicacionActual();
                 } else {
                     Toast.makeText(this,
                             "Sin acceso a localización, hardware deshabilitado!",
                             Toast.LENGTH_LONG).show();
                 }
                 return;
-            }
-        }
-    }
-
-    // Dibujar ruta
-    private String getRequestUrl(LatLng origen, LatLng destino) {
-
-        String str_origen = "origin=" + origen.latitude + "," + origen.longitude;
-        String str_desttino = "destination=" + destino.latitude + "," + destino.longitude;
-        String str_sensor = "sensor=false";
-        String str_mode = "mode=driving";
-        String str_param = str_origen + "&" + str_desttino + "&" + str_sensor + "&" + str_mode;
-        String str_salida = "json";
-        String url = "https://maps.googleapis.com/maps/api/directions/" + str_salida + "?" + str_param + "&key=AIzaSyBhHTgsUynwhanscYcaDWNTpGQSbdZiAhI";
-
-        return url;
-
-    }
-
-    private String requestDirection(String urlSolicitada) throws IOException {
-
-        String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(urlSolicitada);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response result
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
-            }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            httpURLConnection.disconnect();
-        }
-
-        return responseString;
-    }
-
-    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String respuesta = "";
-            try {
-                respuesta = requestDirection(strings[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return respuesta;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
-    }
-
-    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
-
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
-            JSONObject jsonObject = null;
-            List<List<HashMap<String, String>>> routes = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                DirectionsParser directionsParser = new DirectionsParser();
-                routes = directionsParser.parse(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
-            //Get list route and display it into the map
-
-            ArrayList points = null;
-
-            PolylineOptions polylineOptions = null;
-
-            for (List<HashMap<String, String>> path : lists) {
-                points = new ArrayList();
-                polylineOptions = new PolylineOptions();
-
-                for (HashMap<String, String> point : path) {
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lon = Double.parseDouble(point.get("lon"));
-
-                    points.add(new LatLng(lat, lon));
-                }
-
-                polylineOptions.addAll(points);
-                polylineOptions.width(5);
-                polylineOptions.color(Color.MAGENTA);
-                polylineOptions.geodesic(true);
-            }
-
-            if (polylineOptions != null) {
-                if (ruta != null) {
-                    ruta.remove();
-                }
-                ruta = mMap.addPolyline(polylineOptions);
-            } else {
-                Toast.makeText(getApplicationContext(), "Direction not found!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -593,18 +602,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     Alojamiento nuevoAlojamiento = singleSnapshot.getValue(Alojamiento.class);
-//                    Ubicacion nuevaUbicacion = singleSnapshot.getValue(Ubicacion.class);
                     Log.i(TAG, nuevoAlojamiento.getTipo());
 
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
-                            .title(nuevoAlojamiento.getTipo())
-                            .snippet(nuevoAlojamiento.getDescripcion())
-                            .alpha(0.75f).icon(BitmapDescriptorFactory
-                                    .defaultMarker(
-                                            BitmapDescriptorFactory.HUE_CYAN
-                                    )));
+                    double distancia = distance(ubicacionActual.getPosition().latitude, ubicacionActual.getPosition().longitude, nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude());
+                    Log.i(TAG, "" + distancia);
+                    if (distancia <= 2) {
+                        Marker m = mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
+                                .title(nuevoAlojamiento.getTipo())
+                                .snippet(nuevoAlojamiento.getDescripcion())
+                                .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
+                        m.setTag(nuevoAlojamiento);
 
+                    }
                 }
             }
 
@@ -613,6 +623,72 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.w(TAG, "Error en la consulta", databaseError.toException());
             }
         });
+    }
+
+    // Cargar JSON
+    public void cargarUbicacionesFiltros() {
+
+        if (fechafin == -1 || fechaInicio == -1) {
+            Toast.makeText(this, "Se debe elegir fecha de inicio y fecha final", Toast.LENGTH_SHORT).show();
+        } else if(fechafin < fechaInicio) {
+            Toast.makeText(this, "la fecha final debe ser después de la fecha inicial", Toast.LENGTH_SHORT).show();
+        } else {
+            mMap.clear();
+
+            ubicacionActualInfo = new MarkerOptions()
+                    .position(ubicacionActual.getPosition())
+                    .title("Tú")
+                    .snippet("Estás aquí") //Texto de información
+                    .alpha(1f)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
+
+            ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+
+            circle.remove();
+
+            circleOptions = new CircleOptions()
+                    .center(ubicacionActual.getPosition())
+                    .radius(2000) //metros
+                    .strokeWidth(3)
+                    .strokeColor(Color.BLACK)
+                    .fillColor(Color.argb(32, 0, 0, 0))
+                    .clickable(true);
+
+            circle = mMap.addCircle(circleOptions);
+
+
+            databaseRef = database.getReference(PATH_ALOJAMIENTOS);
+            databaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                        Alojamiento nuevoAlojamiento = singleSnapshot.getValue(Alojamiento.class);
+                        Log.i(TAG, nuevoAlojamiento.getTipo());
+
+                        double distancia = distance(ubicacionActual.getPosition().latitude, ubicacionActual.getPosition().longitude, nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude());
+                        Log.i(TAG, "" + distancia);
+                        if (distancia <= 2) {
+                            if((fechaInicio >= nuevoAlojamiento.getFechaInicio() && fechaInicio <= nuevoAlojamiento.getFechaFin()) && (fechafin >= nuevoAlojamiento.getFechaInicio() && fechafin <= nuevoAlojamiento.getFechaFin())){
+                                Marker m = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
+                                        .title(nuevoAlojamiento.getTipo())
+                                        .snippet(nuevoAlojamiento.getDescripcion())
+                                        .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
+                                m.setTag(nuevoAlojamiento);
+                            }
+
+                        }
+                    }
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "Error en la consulta", databaseError.toException());
+                }
+            });
+        }
+
     }
 
     // Menu

@@ -29,10 +29,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/common_google_signin_btn_text_dark"
                 android:ems="10"
                 android:hint="@string/hint_nombre"
                 android:inputType="textPersonName"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+                android:textColor="@color/common_google_signin_btn_text_dark"
+                android:textColorHint="#aaaaaa"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="16dp" />
 
@@ -41,10 +43,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/common_google_signin_btn_text_dark"
                 android:ems="10"
                 android:hint="@string/hint_apellido"
                 android:inputType="textPersonName"
-                android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+                android:textColor="@color/common_google_signin_btn_text_dark"
+                android:textColorHint="#aaaaaa" />
 
         </LinearLayout>
 
@@ -56,10 +60,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark"
             android:ems="10"
             android:hint="@string/hint_edad"
             android:inputType="number|numberSigned"
-            android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textColorHint="#aaaaaa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lyt_nombre_apellido" />
@@ -71,10 +77,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark"
             android:ems="10"
             android:hint="@string/hint_correo"
             android:inputType="textPersonName"
-            android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textColorHint="#aaaaaa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
@@ -87,10 +95,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:backgroundTint="@color/common_google_signin_btn_text_dark"
             android:ems="10"
             android:hint="@string/hint_contrasena"
             android:inputType="textPersonName"
-            android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+            android:textColor="@color/common_google_signin_btn_text_dark"
+            android:textColorHint="#aaaaaa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_correo" />

@@ -25,8 +25,17 @@ public class Alojamiento {
     private long fechaInicio;
     private long fechaFin;
     private String descripcion;
+    private String idAlojamiento;
 
     public Alojamiento() {
+    }
+
+    public String getIdAlojamiento() {
+        return idAlojamiento;
+    }
+
+    public void setIdAlojamiento(String idAlojamiento) {
+        this.idAlojamiento = idAlojamiento;
     }
 
     public double getLatitude() {

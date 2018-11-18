@@ -84,6 +84,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
+
         mContext = getApplicationContext();
         mResources = getResources();
 
@@ -140,6 +144,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
         navigationView.setCheckedItem(R.id.nav_perfil);
     }
 

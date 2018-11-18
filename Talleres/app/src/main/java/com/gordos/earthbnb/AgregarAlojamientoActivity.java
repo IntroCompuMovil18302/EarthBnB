@@ -137,6 +137,10 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_alojamiento);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
+
         // Inicialización de variables locales
         ubicaciónAlojamientoLatLng = null;
         esFechaInicio = true;
@@ -291,6 +295,9 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
     @Override
     protected void onResume() {
         super.onResume();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
         navigationView.setCheckedItem(R.id.nav_agregar_alojamiento);
     }
 
@@ -566,6 +573,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             nuevoAlojamiento.setFechaInicio(fechaInicio);
             nuevoAlojamiento.setFechaFin(fechafin);
             nuevoAlojamiento.setDescripcion(et_descripcion.getText().toString());
+            nuevoAlojamiento.setIdAlojamiento(key);
 
             databaseRef = database.getReference(PATH_ALOJAMIENTOS + key);
             databaseRef.setValue(nuevoAlojamiento);

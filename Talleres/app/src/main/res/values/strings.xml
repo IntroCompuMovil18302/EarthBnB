@@ -45,6 +45,10 @@
     <string name="label_fecha_inicio">Escoger fecha de inicio</string>
     <string name="label_fecha_fin">Escoger fecha final</string>
     <string name="label_descripcion">Descripción</string>
+    <string name="label_desde">Desde</string>
+    <string name="label_hasta">Hasta</string>
+
+    <string name="label_filtrar_fecha">Filtrar por fecha</string>
 
     <!-- Mensajes -->
     <string name="msg_error_autenticacion">Se ha producido un error al autenticarse</string>

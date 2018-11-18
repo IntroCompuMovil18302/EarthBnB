@@ -10,22 +10,22 @@
 
     <ImageView
         android:id="@+id/img_foto_perfil_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/logo_peque" />
 
     <TextView
         android:id="@+id/tv_nombre_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Coding in flow"
+        android:text="EarthBnB"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/tv_tipo_usuario_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="textoPrueba" />
+        android:text="La comodidad en tu mundo" />
 
 </LinearLayout>

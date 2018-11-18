@@ -56,8 +56,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
+
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
+
+        Intent intent = getIntent();
+        Toast.makeText(this, ((String) intent.getExtras().get("alojamiento")), Toast.LENGTH_SHORT).show();
 
         cargarMenu();
 
@@ -67,6 +74,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            super.onBackPressed();
+        }
         navigationView.setCheckedItem(R.id.nav_hospedajes);
     }
 
