@@ -436,11 +436,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if (esFechaInicio) {
                     tv_desde.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-                    cal.add(Calendar.DATE, -1);
+                    cal.add(Calendar.DATE, 1);
                     fechaInicio = cal.getTimeInMillis();
                 } else {
                     tv_hasta.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-                    cal.add(Calendar.DATE, 1);
+                    cal.add(Calendar.DATE, -1);
                     fechafin = cal.getTimeInMillis();
                 }
 
@@ -606,11 +606,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     double distancia = distance(ubicacionActual.getPosition().latitude, ubicacionActual.getPosition().longitude, nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude());
                     Log.i(TAG, "" + distancia);
+
                     if (distancia <= 2) {
+                        String calificacion = "";
+                        if(nuevoAlojamiento.getCalificacion() == -1) {
+                            calificacion = "Este alojamiento aún no ha sido calificado";
+                        } else {
+                            calificacion = "Calificación " + nuevoAlojamiento.getCalificacion();
+                        }
+
                         Marker m = mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
                                 .title(nuevoAlojamiento.getTipo())
-                                .snippet(nuevoAlojamiento.getDescripcion())
+                                .snippet(calificacion)
                                 .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
                         m.setTag(nuevoAlojamiento);
 
@@ -669,10 +677,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.i(TAG, "" + distancia);
                         if (distancia <= 2) {
                             if((fechaInicio >= nuevoAlojamiento.getFechaInicio() && fechaInicio <= nuevoAlojamiento.getFechaFin()) && (fechafin >= nuevoAlojamiento.getFechaInicio() && fechafin <= nuevoAlojamiento.getFechaFin())){
+
+                                String calificacion = "";
+                                if(nuevoAlojamiento.getCalificacion() == -1) {
+                                    calificacion = "Este alojamiento aún no ha sido calificado";
+                                } else {
+                                    calificacion = "Calificación " + nuevoAlojamiento.getCalificacion();
+                                }
+
                                 Marker m = mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
                                         .title(nuevoAlojamiento.getTipo())
-                                        .snippet(nuevoAlojamiento.getDescripcion())
+                                        .snippet(calificacion)
                                         .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
                                 m.setTag(nuevoAlojamiento);
                             }

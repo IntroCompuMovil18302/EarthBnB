@@ -29,6 +29,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -54,8 +56,10 @@ import com.gordos.earthbnb.modelo.AlojamientoUsuario;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AgregarAlojamientoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -87,10 +91,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
     private TextView tv_fecha_fin;
     private TextView tv_agregar_fotos;
     private ImageButton btn_ubicacion_alojamiento;
-    private ImageButton btn_agregar_foto_1;
-    private ImageButton btn_agregar_foto_2;
-    private ImageButton btn_agregar_foto_3;
-    private ImageButton btn_agregar_foto_4;
+    private ImageButton btn_agregar_foto;
     private ImageButton btn_fecha_inicio;
     private ImageButton btn_fecha_fin;
     private Spinner sp_tipo_alojamiento;
@@ -108,17 +109,16 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
     private Switch sw_desayuno;
     private Switch sw_acceso_cocina;
     private Button btn_agregar_alojamiento_submit;
+    LinearLayout ly_fotos_agregadas;
 
     // Variables locales
     private LatLng ubicaciónAlojamientoLatLng;
     private int numeroImagenSeleccionada;
-    private BitmapDrawable imagenCargada1;
-    private BitmapDrawable imagenCargada2;
-    private BitmapDrawable imagenCargada3;
-    private BitmapDrawable imagenCargada4;
+    private BitmapDrawable imagenCargada;
     private boolean esFechaInicio;
     private long fechaInicio;
     private long fechafin;
+    private List<BitmapDrawable> imagenesCargadas;
 
     // Constantes calendario
     private static final String CERO = "0";
@@ -146,6 +146,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
         esFechaInicio = true;
         fechaInicio = -1;
         fechafin = -1;
+        imagenesCargadas = new ArrayList<BitmapDrawable>();
 
         c.set(Calendar.HOUR, 0);
         c.set(Calendar.MINUTE, 0);
@@ -181,16 +182,15 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
         sw_acceso_cocina = (Switch) findViewById(R.id.sw_cocina);
 
         btn_ubicacion_alojamiento = (ImageButton) findViewById(R.id.btn_agregar_alojamiento);
-        btn_agregar_foto_1 = (ImageButton) findViewById(R.id.btn_agregar_foto_1);
-        btn_agregar_foto_2 = (ImageButton) findViewById(R.id.btn_agregar_foto_2);
-        btn_agregar_foto_3 = (ImageButton) findViewById(R.id.btn_agregar_foto_3);
-        btn_agregar_foto_4 = (ImageButton) findViewById(R.id.btn_agregar_foto_4);
         btn_fecha_inicio = (ImageButton) findViewById(R.id.btn_agregar_fecha_inicio);
         btn_fecha_fin = (ImageButton) findViewById(R.id.btn_agregar_fecha_final);
+        btn_agregar_foto = (ImageButton) findViewById(R.id.btn_agregar_foto);
 
         sp_tipo_alojamiento = (Spinner) findViewById(R.id.sp_tipo_alojamiento);
 
         btn_agregar_alojamiento_submit = (Button) findViewById(R.id.btn_agregar_alojamiento_submit);
+
+        ly_fotos_agregadas = (LinearLayout) findViewById(R.id.ly_fotos_agregadas);
 
         ArrayAdapter adaptador = ArrayAdapter.createFromResource(this, R.array.tipo_array, R.layout.spinner_personalizado);
         adaptador.setDropDownViewResource(R.layout.spinner_desplegable_personalizado);
@@ -201,6 +201,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             @Override
             public void onClick(View view) {
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                Toast.makeText(AgregarAlojamientoActivity.this, "Elija su ubicación", Toast.LENGTH_SHORT).show();
 
                 try {
                     Intent intent = builder.build(AgregarAlojamientoActivity.this);
@@ -213,7 +214,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             }
         });
 
-        btn_agregar_foto_1.setOnClickListener(new View.OnClickListener() {
+        btn_agregar_foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 solicitarPermisoAlmacenamiento();
@@ -221,45 +222,6 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                     Intent seleccionarImagen = new Intent(Intent.ACTION_PICK);
                     seleccionarImagen.setType("image/*");
                     numeroImagenSeleccionada = 1;
-                    startActivityForResult(seleccionarImagen, PERMISO_ALMACENAMIENTO);
-                }
-            }
-        });
-
-        btn_agregar_foto_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                solicitarPermisoAlmacenamiento();
-                if (ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Intent seleccionarImagen = new Intent(Intent.ACTION_PICK);
-                    seleccionarImagen.setType("image/*");
-                    numeroImagenSeleccionada = 2;
-                    startActivityForResult(seleccionarImagen, PERMISO_ALMACENAMIENTO);
-                }
-            }
-        });
-
-        btn_agregar_foto_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                solicitarPermisoAlmacenamiento();
-                if (ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Intent seleccionarImagen = new Intent(Intent.ACTION_PICK);
-                    seleccionarImagen.setType("image/*");
-                    numeroImagenSeleccionada = 3;
-                    startActivityForResult(seleccionarImagen, PERMISO_ALMACENAMIENTO);
-                }
-            }
-        });
-
-        btn_agregar_foto_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                solicitarPermisoAlmacenamiento();
-                if (ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(AgregarAlojamientoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Intent seleccionarImagen = new Intent(Intent.ACTION_PICK);
-                    seleccionarImagen.setType("image/*");
-                    numeroImagenSeleccionada = 4;
                     startActivityForResult(seleccionarImagen, PERMISO_ALMACENAMIENTO);
                 }
             }
@@ -401,8 +363,8 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
         }
 
         // Validación de fotos
-        if (imagenCargada1 == null && imagenCargada2 == null && imagenCargada3 == null && imagenCargada4 == null) {
-            tv_agregar_fotos.setError("¡Se debe agregar por lo menos 1 foto del alojamiento!");
+        if (imagenesCargadas.size() < 4) {
+            tv_agregar_fotos.setError("¡Se debe agregar por lo menos 4 fotos del alojamiento!");
             valido = false;
         } else {
             tv_agregar_fotos.setError(null);
@@ -458,100 +420,35 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
 
             nuevoAlojamientoUsuario.setIdAlojamiento(key);
 
-            if (imagenCargada1 != null) {
-                imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-1.jpg");
-                Bitmap bitmap = imagenCargada1.getBitmap();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                byte[] data = baos.toByteArray();
+            if (imagenesCargadas.size() >= 4) {
 
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Imagen", "Falla");
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("Imagen", "NO falla");
-                    }
-                });
+                for (BitmapDrawable imagen: imagenesCargadas) {
+                    databaseRef = database.getReference("fotos-alojamiento");
+                    String fotoKey = databaseRef.push().getKey();
 
-                String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-1.jpg";
-                nuevoAlojamiento.setUrlFoto1(urlImg);
-            }
+                    imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + fotoKey + ".jpg");
+                    Bitmap bitmap = imagen.getBitmap();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+                    byte[] data = baos.toByteArray();
 
-            if (imagenCargada2 != null) {
-                imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-2.jpg");
-                Bitmap bitmap = imagenCargada2.getBitmap();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                byte[] data = baos.toByteArray();
+                    UploadTask uploadTask = imageRef.putBytes(data);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i("Imagen", "Falla");
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.i("Imagen", "NO falla");
+                        }
+                    });
+                    databaseRef = database.getReference(PATH_FOTOS_ALOJAMIENTO + "/" + key);
+                    databaseRef.setValue(fotoKey);
 
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Imagen", "Falla");
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("Imagen", "NO falla");
-                    }
-                });
-
-                String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-2.jpg";
-                nuevoAlojamiento.setUrlFoto2(urlImg);
-            }
-
-            if (imagenCargada3 != null) {
-                imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-3.jpg");
-                Bitmap bitmap = imagenCargada3.getBitmap();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                byte[] data = baos.toByteArray();
-
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Imagen", "Falla");
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("Imagen", "NO falla");
-                    }
-                });
-
-                String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-3.jpg";
-                nuevoAlojamiento.setUrlFoto3(urlImg);
-            }
-
-            if (imagenCargada4 != null) {
-                imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-4.jpg");
-                Bitmap bitmap = imagenCargada1.getBitmap();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-                byte[] data = baos.toByteArray();
-
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("Imagen", "Falla");
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("Imagen", "NO falla");
-                    }
-                });
-
-                String urlImg = "https://firebasestorage.googleapis.com/v0/b/earthbnb-8e9db.appspot.com/o/" + PATH_FOTOS_ALOJAMIENTO + key + "/" + key + "-4.jpg";
-                nuevoAlojamiento.setUrlFoto4(urlImg);
+                }
+                nuevoAlojamiento.setUrlFotos(key);
             }
 
             nuevoAlojamiento.setLatitude(ubicaciónAlojamientoLatLng.latitude);
@@ -574,6 +471,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             nuevoAlojamiento.setFechaFin(fechafin);
             nuevoAlojamiento.setDescripcion(et_descripcion.getText().toString());
             nuevoAlojamiento.setIdAlojamiento(key);
+            nuevoAlojamiento.setCalificacion(-1);
 
             databaseRef = database.getReference(PATH_ALOJAMIENTOS + key);
             databaseRef.setValue(nuevoAlojamiento);
@@ -759,32 +657,19 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imagenCargada = new BitmapDrawable(AgregarAlojamientoActivity.this.getResources(), selectedImage);
+                        imagenesCargadas.add(imagenCargada);
 
-                        switch (numeroImagenSeleccionada) {
-                            case 1:
-                                imagenCargada1 = new BitmapDrawable(AgregarAlojamientoActivity.this.getResources(), selectedImage);
-                                btn_agregar_foto_1.setBackground(imagenCargada1);
-                                btn_agregar_foto_1.setImageBitmap(selectedImage);
-                                break;
+                        ImageView nuevaFoto = new ImageView(this);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(dpToPx(8),dpToPx(8),dpToPx(8),dpToPx(8));
+                        params.height = dpToPx(100);
+                        params.width = dpToPx(100);
 
-                            case 2:
-                                imagenCargada2 = new BitmapDrawable(AgregarAlojamientoActivity.this.getResources(), selectedImage);
-                                btn_agregar_foto_2.setBackground(imagenCargada2);
-                                btn_agregar_foto_2.setImageBitmap(selectedImage);
-                                break;
+                        nuevaFoto.setImageDrawable(imagenCargada);
+                        nuevaFoto.setLayoutParams(params);
+                        ly_fotos_agregadas.addView(nuevaFoto);
 
-                            case 3:
-                                imagenCargada3 = new BitmapDrawable(AgregarAlojamientoActivity.this.getResources(), selectedImage);
-                                btn_agregar_foto_3.setBackground(imagenCargada3);
-                                btn_agregar_foto_3.setImageBitmap(selectedImage);
-                                break;
-
-                            case 4:
-                                imagenCargada4 = new BitmapDrawable(AgregarAlojamientoActivity.this.getResources(), selectedImage);
-                                btn_agregar_foto_4.setBackground(imagenCargada4);
-                                btn_agregar_foto_4.setImageBitmap(selectedImage);
-                                break;
-                        }
 
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -792,5 +677,12 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                 }
                 break;
         }
+    }
+
+    public int dpToPx(int dp) {
+        float density = AgregarAlojamientoActivity.this.getResources()
+                .getDisplayMetrics()
+                .density;
+        return Math.round((float) dp * density);
     }
 }
