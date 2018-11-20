@@ -18,24 +18,14 @@ public class Alojamiento {
     private boolean desayuno;
     private boolean accesoCocina;
     private String idUsuario;
-    private String urlFoto1;
-    private String urlFoto2;
-    private String urlFoto3;
-    private String urlFoto4;
+    private String urlFotos;
     private long fechaInicio;
     private long fechaFin;
     private String descripcion;
     private String idAlojamiento;
+    private double calificacion;
 
     public Alojamiento() {
-    }
-
-    public String getIdAlojamiento() {
-        return idAlojamiento;
-    }
-
-    public void setIdAlojamiento(String idAlojamiento) {
-        this.idAlojamiento = idAlojamiento;
     }
 
     public double getLatitude() {
@@ -166,36 +156,12 @@ public class Alojamiento {
         this.idUsuario = idUsuario;
     }
 
-    public String getUrlFoto1() {
-        return urlFoto1;
+    public String getUrlFotos() {
+        return urlFotos;
     }
 
-    public void setUrlFoto1(String urlFoto1) {
-        this.urlFoto1 = urlFoto1;
-    }
-
-    public String getUrlFoto2() {
-        return urlFoto2;
-    }
-
-    public void setUrlFoto2(String urlFoto2) {
-        this.urlFoto2 = urlFoto2;
-    }
-
-    public String getUrlFoto3() {
-        return urlFoto3;
-    }
-
-    public void setUrlFoto3(String urlFoto3) {
-        this.urlFoto3 = urlFoto3;
-    }
-
-    public String getUrlFoto4() {
-        return urlFoto4;
-    }
-
-    public void setUrlFoto4(String urlFoto4) {
-        this.urlFoto4 = urlFoto4;
+    public void setUrlFotos(String urlFotos) {
+        this.urlFotos = urlFotos;
     }
 
     public long getFechaInicio() {
@@ -220,5 +186,21 @@ public class Alojamiento {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getIdAlojamiento() {
+        return idAlojamiento;
+    }
+
+    public void setIdAlojamiento(String idAlojamiento) {
+        this.idAlojamiento = idAlojamiento;
+    }
+
+    public double getCalificacion() {
+        return calificacion;
+    }
+
+    public void setCalificacion(double calificacion) {
+        this.calificacion = calificacion;
     }
 }
