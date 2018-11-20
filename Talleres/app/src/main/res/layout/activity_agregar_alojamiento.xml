@@ -522,59 +522,32 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <HorizontalScrollView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:layout_weight="1"
-                            android:orientation="horizontal">
+                            android:layout_marginTop="8dp">
 
-                            <ImageButton
-                                android:id="@+id/btn_agregar_foto_1"
-                                android:layout_width="0dp"
-                                android:layout_height="80dp"
-                                android:layout_marginEnd="8dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/bordes_redondeados3"
-                                android:src="@drawable/ic_agregar_foto" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="100dp"
+                                android:layout_marginTop="8dp"
+                                android:orientation="horizontal"
+                                android:id="@+id/ly_fotos_agregadas">
 
-                            <ImageButton
-                                android:id="@+id/btn_agregar_foto_2"
-                                android:layout_width="0dp"
-                                android:layout_height="80dp"
-                                android:layout_marginEnd="8dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/bordes_redondeados3"
-                                android:src="@drawable/ic_agregar_foto" />
+                                <ImageButton
+                                    android:id="@+id/btn_agregar_foto"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/bordes_redondeados3"
+                                    android:src="@drawable/ic_agregar_foto" />
 
-                        </LinearLayout>
+                            </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_weight="1"
-                            android:orientation="horizontal">
 
-                            <ImageButton
-                                android:id="@+id/btn_agregar_foto_3"
-                                android:layout_width="0dp"
-                                android:layout_height="80dp"
-                                android:layout_marginEnd="8dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/bordes_redondeados3"
-                                android:src="@drawable/ic_agregar_foto" />
-
-                            <ImageButton
-                                android:id="@+id/btn_agregar_foto_4"
-                                android:layout_width="0dp"
-                                android:layout_height="80dp"
-                                android:layout_marginEnd="8dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/bordes_redondeados3"
-                                android:src="@drawable/ic_agregar_foto" />
-
-                        </LinearLayout>
+                        </HorizontalScrollView>
 
                         <LinearLayout
                             android:layout_width="match_parent"
