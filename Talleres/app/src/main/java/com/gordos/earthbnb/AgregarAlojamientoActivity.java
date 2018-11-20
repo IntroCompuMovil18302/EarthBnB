@@ -451,6 +451,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
 
                 }
                 nuevoAlojamiento.setUrlFotos(key);
+
             }
 
             nuevoAlojamiento.setLatitude(ubicacionAlojamientoLatLng.latitude);

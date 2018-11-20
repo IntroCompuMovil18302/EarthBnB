@@ -7,58 +7,47 @@
     android:background="@drawable/background_gradient2"
     tools:context=".ClientRatingActivity">
 
-    <ImageView
-        android:id="@+id/img_foto_perfil_cliente"
-        android:layout_width="224dp"
-        android:layout_height="219dp"
-
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/usuario" />
-
     <RatingBar
         android:id="@+id/rating_bar"
         android:layout_width="237dp"
         android:layout_height="54dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="8dp"
         android:isIndicator="true"
         android:numStars="5"
         android:stepSize="0.1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_apellido_perfil" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
-        android:id="@+id/tv_apellido_perfil"
+        android:id="@+id/tv_calificar_alojamiento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Calificación:"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:text="Califique el alojamiento"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_foto_perfil_cliente" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/et_description_calificacion"
+        android:id="@+id/et_comentarios_calificacion"
         android:layout_width="356dp"
         android:layout_height="143dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/common_google_signin_btn_text_dark_default"
         android:ems="10"
-        android:hint="@string/hint_descripcion"
+        android:hint="Comentarios"
         android:inputType="textPersonName"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorHint="@color/common_google_signin_btn_text_dark_default"
@@ -68,7 +57,7 @@
         tools:background="#fffffff" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonEnviarCalificacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -82,7 +71,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_description_calificacion" />
+        app:layout_constraintTop_toBottomOf="@+id/et_comentarios_calificacion" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="298dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="Ayudanos a mejorar dejando tu calificación y un comentario de tu experiencia"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_calificar_alojamiento" />
 
 
 </android.support.constraint.ConstraintLayout>

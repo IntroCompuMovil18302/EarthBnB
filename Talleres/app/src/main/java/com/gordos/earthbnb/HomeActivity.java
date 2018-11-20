@@ -145,7 +145,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
 
-        Intent intent = getIntent();
+            Intent intent = getIntent();
         cargarAlojamiento((String) intent.getExtras().get("alojamiento"));
 
         btn_ver_fecha_inicio.setOnClickListener(new View.OnClickListener() {
