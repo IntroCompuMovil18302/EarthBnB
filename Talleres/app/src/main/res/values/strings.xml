@@ -22,12 +22,15 @@
     <string name="label_camara">Cámara</string>
     <string name="label_registrarme">Registrarme</string>
     <string name="label_agregar_alojamiento">Agregar Alojamiento</string>
+    <string name="label_arrendar_alojamiento">Arrendar Alojamiento</string>
+    <string name="label_ver_alojamiento">Ver Alojamiento</string>
     <string name="label_enviar">Enviar</string>
     <string name="label_hueped">Huésped</string>
     <string name="label_anfitrion">Anfitrión</string>
     <string name="label_foto_perfil">Foto de perfil</string>
     <string name="label_seleccionar_ubicacion">Selecciona una ubicación</string>
 
+    <string name="label_tipoAlojamiento">Tipo Alojamiento</string>
     <string name="label_precio">Precio (COP)</string>
     <string name="label_numero_huspedes">Cantidad de huéspedes</string>
     <string name="label_numero_camas">Cantidad de camas</string>
@@ -42,6 +45,7 @@
     <string name="label_acceso_cocina">Acceso a la cocina</string>
     <string name="label_elementos_basicos">Elementos basicos</string>
     <string name="label_agregar_fotos">Agregar fotos</string>
+    <string name="label_ver_fotos">Ver fotos</string>
     <string name="label_elementos_basicos_descripcion">Elementos básicos: Toallas, sábanas, jabón, papel higiénico, almohadas, crema dental, café</string>
     <string name="label_fecha_inicio">Escoger fecha de inicio</string>
     <string name="label_fecha_fin">Escoger fecha final</string>

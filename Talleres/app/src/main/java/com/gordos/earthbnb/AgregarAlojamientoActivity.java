@@ -649,7 +649,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                     Place place = PlacePicker.getPlace(this, data);
                     tv_ubicacion_alojamiento.setText(place.getAddress());
                     Toast.makeText(this, place.getAddress(), Toast.LENGTH_SHORT).show();
-                    ubicaciónAlojamientoLatLng = place.getLatLng();
+                    ubicacionAlojamientoLatLng = place.getLatLng();
                 }
                 break;
 
