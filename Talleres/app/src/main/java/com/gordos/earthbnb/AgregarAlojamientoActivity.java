@@ -423,8 +423,9 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             if (imagenesCargadas.size() >= 4) {
 
                 for (BitmapDrawable imagen: imagenesCargadas) {
-                    databaseRef = database.getReference("fotos-alojamiento");
                     String fotoKey = databaseRef.push().getKey();
+                    databaseRef = database.getReference(PATH_FOTOS_ALOJAMIENTO + key + "/" + fotoKey);
+                    databaseRef.setValue(fotoKey);
 
                     imageRef = storageRef.child(PATH_FOTOS_ALOJAMIENTO + key + "/" + fotoKey + ".jpg");
                     Bitmap bitmap = imagen.getBitmap();
@@ -444,8 +445,6 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                             Log.i("Imagen", "NO falla");
                         }
                     });
-                    databaseRef = database.getReference(PATH_FOTOS_ALOJAMIENTO + "/" + key);
-                    databaseRef.setValue(fotoKey);
 
                 }
                 nuevoAlojamiento.setUrlFotos(key);
