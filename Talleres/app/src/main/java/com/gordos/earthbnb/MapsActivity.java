@@ -106,6 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private CircleOptions circleOptions;
     private Circle circle;
+    private Polyline ruta;
 
     // Variables de localización
     private Marker ubicacionActual;
@@ -224,6 +225,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             .snippet("Estás buscando sitios cerca de aquí") //Texto de información
                                             .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.human_location));
                                     ubicacionActual = mMap.addMarker(ubicacionActualInfo);
+
                                     mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
                                     mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
 
@@ -622,6 +624,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
                         m.setTag(nuevoAlojamiento);
 
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker m) {
+                                String url = getRequestUrl(ubicacionActualInfo.getPosition(), m.getPosition());
+                                TaskRequestDirections taskRequestDirections = new TaskRequestDirections();
+                                taskRequestDirections.execute(url);
+                                m.showInfoWindow();
+                                return true;
+                            }
+                        });
                     }
                 }
             }
@@ -756,6 +768,198 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
+    }
+
+    // Dibujar ruta
+
+    private String getRequestUrl(LatLng origen, LatLng destino) {
+
+        String str_origen = "origin=" + origen.latitude + "," + origen.longitude;
+        String str_desttino = "destination=" + destino.latitude + "," + destino.longitude;
+        String str_sensor = "sensor=false";
+        String str_mode = "mode=driving";
+        String str_param = str_origen + "&" + str_desttino + "&" + str_sensor + "&" + str_mode;
+        String str_salida = "json";
+        String url = "https://maps.googleapis.com/maps/api/directions/" + str_salida + "?" + str_param + "&key=AIzaSyBhHTgsUynwhanscYcaDWNTpGQSbdZiAhI";
+
+        return url;
+
+    }
+
+
+
+    private String requestDirection(String urlSolicitada) throws IOException {
+
+        String responseString = "";
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+
+        try {
+            URL url = new URL(urlSolicitada);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+
+            //Get the response result
+
+            inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = "";
+
+            while ((line = bufferedReader.readLine()) != null) {
+
+                stringBuffer.append(line);
+
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            if (inputStream != null) {
+
+                inputStream.close();
+
+            }
+
+            httpURLConnection.disconnect();
+
+        }
+
+        return responseString;
+
+    }
+
+
+
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+
+
+        @Override
+
+        protected String doInBackground(String... strings) {
+
+            String respuesta = "";
+
+            try {
+
+                respuesta = requestDirection(strings[0]);
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+
+            return respuesta;
+
+        }
+
+
+
+        @Override
+
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+
+            TaskParser taskParser = new TaskParser();
+            taskParser.execute(s);
+
+        }
+
+    }
+
+
+
+    public class TaskParser extends AsyncTask<String, Void, List<List<HashMap<String, String>>>> {
+
+        @Override
+
+        protected List<List<HashMap<String, String>>> doInBackground(String... strings) {
+
+            JSONObject jsonObject = null;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+
+                jsonObject = new JSONObject(strings[0]);
+                DirectionsParser directionsParser = new DirectionsParser();
+                routes = directionsParser.parse(jsonObject);
+
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+
+            }
+
+            return routes;
+
+        }
+
+
+
+        @Override
+
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
+
+            //Get list route and display it into the map
+
+
+
+            ArrayList points = null;
+            PolylineOptions polylineOptions = null;
+
+            for (List<HashMap<String, String>> path : lists) {
+
+                points = new ArrayList();
+                polylineOptions = new PolylineOptions();
+
+                for (HashMap<String, String> point : path) {
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lon = Double.parseDouble(point.get("lon"));
+
+                    points.add(new LatLng(lat, lon));
+
+                }
+
+                polylineOptions.addAll(points);
+                polylineOptions.width(5);
+                polylineOptions.color(Color.MAGENTA);
+                polylineOptions.geodesic(true);
+
+            }
+
+
+
+            if (polylineOptions != null) {
+
+                if (ruta != null) {
+
+                    ruta.remove();
+
+                }
+
+                ruta = mMap.addPolyline(polylineOptions);
+
+            } else {
+
+                Toast.makeText(getApplicationContext(), "Direction not found!", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }
+
     }
 
 }
