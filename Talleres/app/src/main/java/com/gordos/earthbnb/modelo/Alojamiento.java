@@ -26,6 +26,7 @@ public class Alojamiento {
     private long fechaFin;
     private String descripcion;
     private String idAlojamiento;
+    private int precio;
 
     public Alojamiento() {
     }
@@ -220,5 +221,13 @@ public class Alojamiento {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
     }
 }

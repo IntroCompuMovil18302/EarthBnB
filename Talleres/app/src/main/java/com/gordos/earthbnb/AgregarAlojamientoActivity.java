@@ -94,6 +94,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
     private ImageButton btn_fecha_inicio;
     private ImageButton btn_fecha_fin;
     private Spinner sp_tipo_alojamiento;
+    private EditText et_precio;
     private EditText et_huespedes;
     private EditText et_habitaciones;
     private EditText et_camas;
@@ -165,6 +166,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
         tv_fecha_fin = (TextView) findViewById(R.id.tv_fecha_fin);
         tv_agregar_fotos = (TextView) findViewById(R.id.tv_agregar_fotos);
 
+        et_precio = (EditText) findViewById(R.id.et_precio);
         et_huespedes = (EditText) findViewById(R.id.et_huespedes);
         et_habitaciones = (EditText) findViewById(R.id.et_habitaciones);
         et_camas = (EditText) findViewById(R.id.et_camas);
@@ -347,7 +349,8 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
     private boolean validateForm() {
         boolean valido = true;
 
-        if (TextUtils.isEmpty(et_huespedes.getText().toString()) || TextUtils.isEmpty(et_habitaciones.getText().toString()) || TextUtils.isEmpty(et_camas.getText().toString()) || TextUtils.isEmpty(et_banos.getText().toString())) {
+        if (TextUtils.isEmpty(et_precio.getText().toString()) || TextUtils.isEmpty(et_huespedes.getText().toString()) || TextUtils.isEmpty(et_habitaciones.getText().toString()) || TextUtils.isEmpty(et_camas.getText().toString()) || TextUtils.isEmpty(et_banos.getText().toString())) {
+            et_precio.setError("¡Este campo es requerido!");
             et_huespedes.setError("¡Este campo es requerido!");
             et_camas.setError("¡Este campo es requerido!");
             et_habitaciones.setError("¡Este campo es requerido!");
@@ -574,6 +577,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
             nuevoAlojamiento.setFechaFin(fechafin);
             nuevoAlojamiento.setDescripcion(et_descripcion.getText().toString());
             nuevoAlojamiento.setIdAlojamiento(key);
+            nuevoAlojamiento.setPrecio(Integer.parseInt(et_precio.getText().toString()));
 
             databaseRef = database.getReference(PATH_ALOJAMIENTOS + key);
             databaseRef.setValue(nuevoAlojamiento);

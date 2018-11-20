@@ -28,6 +28,7 @@
     <string name="label_foto_perfil">Foto de perfil</string>
     <string name="label_seleccionar_ubicacion">Selecciona una ubicación</string>
 
+    <string name="label_precio">Precio (COP)</string>
     <string name="label_numero_huspedes">Cantidad de huéspedes</string>
     <string name="label_numero_camas">Cantidad de camas</string>
     <string name="label_numero_banos">Cantidad de baños</string>
