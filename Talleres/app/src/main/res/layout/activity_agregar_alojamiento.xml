@@ -667,11 +667,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
+                                android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+                                android:hint="@string/label_descripcion"
                                 android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textColorHint="#777777"
-                                android:backgroundTint="@color/common_google_signin_btn_text_dark_default"
-                                android:textColorLink="@color/common_google_signin_btn_text_dark_default"
-                                android:hint="@string/label_descripcion" />
+                                android:textColorLink="@color/common_google_signin_btn_text_dark_default" />
 
                         </LinearLayout>
 
