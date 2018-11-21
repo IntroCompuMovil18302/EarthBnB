@@ -286,6 +286,7 @@ public class AgregarAlojamientoActivity extends AppCompatActivity implements Nav
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MILLISECOND, 0);
 
                 if (esFechaInicio) {
                     tv_fecha_inicio.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);

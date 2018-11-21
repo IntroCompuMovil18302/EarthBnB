@@ -50,8 +50,10 @@
             android:name=".ProfileActivity"
             android:launchMode="singleInstance" />
         <activity android:name=".EditProfileActivity" />
-        <activity android:name=".AgregarAlojamientoActivity"
-            android:launchMode="singleInstance" ></activity>
+        <activity
+            android:name=".AgregarAlojamientoActivity"
+            android:launchMode="singleInstance" />
+        <activity android:name=".ComentariosAdapter"></activity>
     </application>
 
 </manifest>

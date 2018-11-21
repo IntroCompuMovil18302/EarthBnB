@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,13 +25,19 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +53,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.gordos.earthbnb.modelo.Alojamiento;
+import com.gordos.earthbnb.modelo.Comentario_Calificacion;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,7 +113,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private Button btn_arrendar_alojamiento_submit;
     private ImageButton btn_ver_fecha_inicio;
     private ImageButton btn_ver_fecha_fin;
-    LinearLayout ly_fotos_alojamiento;
+    private LinearLayout ly_fotos_alojamiento;
+    private ListView lv_comentarios;
+    //private Button btn_calificar_alojamiento_submit;
+
+    List<Comentario_Calificacion> comentarios= new ArrayList<Comentario_Calificacion>();
 
 
     @Override
@@ -113,6 +125,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        lv_comentarios = (ListView) findViewById(R.id.lv_comentarios);
         et_verTipoAlojamiento = (TextView) findViewById(R.id.et_verTipoAlojamiento);
         et_verPrecio = (TextView) findViewById(R.id.et_verPrecio);
         et_verNumHuespedes = (TextView) findViewById(R.id.et_verNumHuespedes);
@@ -134,6 +147,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         btn_ver_fecha_inicio = (ImageButton) findViewById(R.id.btn_ver_fecha_inicio);
         btn_ver_fecha_fin = (ImageButton) findViewById(R.id.btn_ver_fecha_final);
 
+        //btn_calificar_alojamiento_submit = (Button) findViewById(R.id.btn_calificar_alojamiento_submit);
         btn_arrendar_alojamiento_submit = (Button) findViewById(R.id.btn_arrendar_alojamiento_submit);
 
         ly_fotos_alojamiento = (LinearLayout) findViewById(R.id.ly_fotos_alojamiento);
@@ -145,8 +159,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Inicialización de Firebase
         mAuth = FirebaseAuth.getInstance();
 
-            Intent intent = getIntent();
-        cargarAlojamiento((String) intent.getExtras().get("alojamiento"));
+        Intent intent = getIntent();
+        final String idAlojamiento= (String) intent.getExtras().get("alojamiento");
+        cargarAlojamiento(idAlojamiento);
 
         btn_ver_fecha_inicio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,9 +179,54 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        /*btn_calificar_alojamiento_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ClientRatingActivity.class);
+                intent.putExtra("alojamiento", idAlojamiento);
+                startActivity(intent);
+            }
+        });*/
+
+        lv_comentarios.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
         cargarMenu();
+        cargarComentarios(idAlojamiento);
 
+    }
 
+    public void cargarComentarios(String idAlojamiento){
+
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        databaseRef.child("calificaciones/").child(idAlojamiento)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ComentariosAdapter comentariosAdapter = new ComentariosAdapter(HomeActivity.this,comentarios);
+                            lv_comentarios.setAdapter(comentariosAdapter);
+
+                            for (DataSnapshot calificacion: dataSnapshot.getChildren()) {
+                                Comentario_Calificacion comentario_calificacion = calificacion.getValue(Comentario_Calificacion.class);
+                                comentarios.add(comentario_calificacion);
+                            }
+                            Log.d("Log_home_tamcom",String.valueOf(comentarios.size()));
+                            comentariosAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 
     @Override

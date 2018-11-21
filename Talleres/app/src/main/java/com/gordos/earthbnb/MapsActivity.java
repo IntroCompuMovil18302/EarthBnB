@@ -126,6 +126,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     static final int RADIO_DE_LA_TIERRA = 6371;
     private static final String CERO = "0";
     private static final String BARRA = "/";
+    private static final String PATH_FECHAS_RESERVA = "fechas-reserva/";
 
     // Calendario para obtener fecha & hora
     public final Calendar c = Calendar.getInstance();
@@ -435,14 +436,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MILLISECOND, 0);
 
                 if (esFechaInicio) {
                     tv_desde.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-                    cal.add(Calendar.DATE, 1);
                     fechaInicio = cal.getTimeInMillis();
                 } else {
                     tv_hasta.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-                    cal.add(Calendar.DATE, -1);
                     fechafin = cal.getTimeInMillis();
                 }
 
@@ -650,7 +650,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (fechafin == -1 || fechaInicio == -1) {
             Toast.makeText(this, "Se debe elegir fecha de inicio y fecha final", Toast.LENGTH_SHORT).show();
-        } else if(fechafin < fechaInicio) {
+        } else if (fechafin < fechaInicio) {
             Toast.makeText(this, "la fecha final debe ser después de la fecha inicial", Toast.LENGTH_SHORT).show();
         } else {
             mMap.clear();
@@ -681,28 +681,63 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             databaseRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    DatabaseReference databaseReferenceFechas;
+
                     for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                        Alojamiento nuevoAlojamiento = singleSnapshot.getValue(Alojamiento.class);
+                        final Alojamiento nuevoAlojamiento = singleSnapshot.getValue(Alojamiento.class);
                         Log.i(TAG, nuevoAlojamiento.getTipo());
+
+                        Log.i("FECHA INI ALOJAMIENTO", "" + nuevoAlojamiento.getFechaInicio());
+                        Log.i("FECHA INI BUSQUEDA", "" + fechaInicio);
+                        Log.i("FECHA FIN ALOJAMIENTO", "" + nuevoAlojamiento.getFechaFin());
+                        Log.i("FECHA FIN BUSQUEDA", "" + fechafin);
 
                         double distancia = distance(ubicacionActual.getPosition().latitude, ubicacionActual.getPosition().longitude, nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude());
                         Log.i(TAG, "" + distancia);
                         if (distancia <= 2) {
-                            if((fechaInicio >= nuevoAlojamiento.getFechaInicio() && fechaInicio <= nuevoAlojamiento.getFechaFin()) && (fechafin >= nuevoAlojamiento.getFechaInicio() && fechafin <= nuevoAlojamiento.getFechaFin())){
+                            if ((fechaInicio >= nuevoAlojamiento.getFechaInicio() && fechaInicio <= nuevoAlojamiento.getFechaFin()) && (fechafin >= nuevoAlojamiento.getFechaInicio() && fechafin <= nuevoAlojamiento.getFechaFin())) {
 
-                                String calificacion = "";
-                                if(nuevoAlojamiento.getCalificacion() == -1) {
-                                    calificacion = "Este alojamiento aún no ha sido calificado";
-                                } else {
-                                    calificacion = "Calificación " + nuevoAlojamiento.getCalificacion();
-                                }
+                                databaseReferenceFechas = database.getReference(PATH_FECHAS_RESERVA + nuevoAlojamiento.getIdAlojamiento());
 
-                                Marker m = mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
-                                        .title(nuevoAlojamiento.getTipo())
-                                        .snippet(calificacion)
-                                        .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
-                                m.setTag(nuevoAlojamiento);
+                                databaseReferenceFechas.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                        boolean fechaCruzada = false;
+
+                                        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                                            long fechaReserva = singleSnapshot.getValue(Long.class);
+                                            Log.i("FECHA FIN RESERVA", "" + fechaReserva);
+
+                                            if (fechaReserva >= fechaInicio && fechaReserva <= fechafin) {
+                                                fechaCruzada = true;
+                                            }
+
+                                        }
+                                        if (!fechaCruzada) {
+                                            String calificacion = "";
+                                            if (nuevoAlojamiento.getCalificacion() == -1) {
+                                                calificacion = "Este alojamiento aún no ha sido calificado";
+                                            } else {
+                                                calificacion = "Calificación " + nuevoAlojamiento.getCalificacion();
+                                            }
+
+                                            Marker m = mMap.addMarker(new MarkerOptions()
+                                                    .position(new LatLng(nuevoAlojamiento.getLatitude(), nuevoAlojamiento.getLongitude()))
+                                                    .title(nuevoAlojamiento.getTipo())
+                                                    .snippet(calificacion)
+                                                    .alpha(1f).icon(BitmapDescriptorFactory.fromResource(R.drawable.house_location)));
+                                            m.setTag(nuevoAlojamiento);
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
                             }
 
                         }

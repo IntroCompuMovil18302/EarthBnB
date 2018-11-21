@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ComentariosAdapter"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/textViewNombreComentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:text="Nombre"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/textViewComentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="0.5"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+        android:text="Comentario" />
+
+    <TextView
+        android:id="@+id/textViewCalificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:text="0.00"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+        android:gravity="center"/>
+
+    <ImageView
+        android:id="@+id/imageViewEstrellaComentario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:src="@android:drawable/btn_star_big_on" />
+
+
+</LinearLayout>
