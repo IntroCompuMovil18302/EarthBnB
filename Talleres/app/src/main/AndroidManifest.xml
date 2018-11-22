@@ -53,7 +53,8 @@
         <activity
             android:name=".AgregarAlojamientoActivity"
             android:launchMode="singleInstance" />
-        <activity android:name=".ComentariosAdapter"></activity>
+        <activity android:name=".ComentariosAdapter" />
+        <activity android:name=".ReservasAdapter"></activity>
     </application>
 
 </manifest>

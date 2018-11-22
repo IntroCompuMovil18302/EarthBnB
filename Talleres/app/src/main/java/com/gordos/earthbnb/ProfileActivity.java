@@ -1,5 +1,6 @@
 package com.gordos.earthbnb;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -22,7 +23,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +45,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.gordos.earthbnb.modelo.Alojamiento;
+import com.gordos.earthbnb.modelo.Comentario_Calificacion;
+import com.gordos.earthbnb.modelo.Reserva;
+import com.gordos.earthbnb.modelo.ReservaCliente;
 import com.gordos.earthbnb.modelo.Ubicacion;
 import com.gordos.earthbnb.modelo.Usuario;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -67,6 +79,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private TextView tv_correo;
     private TextView tv_edad;
     private TextView tv_tipo_usuario;
+    private ListView lv_historialReservas;
 
     //    private TextView tv_img;
     private ImageView img_foto;
@@ -78,6 +91,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     // Imagen circular
     private Context mContext;
     private Resources mResources;
+
+    List<ReservaCliente> reservas = new ArrayList<ReservaCliente>();
+    boolean bandera= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +113,56 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         tv_correo = (TextView) findViewById(R.id.tv_correo_perfil);
         tv_edad = (TextView) findViewById(R.id.tv_edad_perfil);
         tv_tipo_usuario = (TextView) findViewById(R.id.tv_tipo_usuario_perfil);
+        lv_historialReservas = (ListView) findViewById(R.id.lv_historialReservas);
+
+        lv_historialReservas.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        bandera = false;
+
+        lv_historialReservas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final ReservaCliente reservaCliente = reservas.get(position);
+
+                databaseRef = FirebaseDatabase.getInstance().getReference();
+
+                databaseRef.child("reservas/").child(reservaCliente.getIdAlojamiento())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                        Reserva reserva = data.getValue(Reserva.class);
+
+                                        if(usuario.getUid().equals(reserva.getIdUsuario())){
+                                            Intent intent = new Intent(ProfileActivity.this, ClientRatingActivity.class);
+                                            Bundle extras = new Bundle();
+                                            extras.putString("alojamiento",reservaCliente.getIdAlojamiento());
+                                            extras.putString("reserva",reservaCliente.getIdReserva());
+                                            intent.putExtras(extras);
+                                            startActivity(intent);
+                                            bandera = true;
+                                        }
+                                    }
+                                    /*if(!bandera)
+                                        Toast.makeText(ProfileActivity.this, "Ya calificaste esta reserva", Toast.LENGTH_SHORT).show();*/
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                /*if(!bandera)
+                    Toast.makeText(ProfileActivity.this, "Ya calificaste esta reserva", Toast.LENGTH_SHORT).show();*/
+            }
+        });
 
         img_foto = (ImageView) findViewById(R.id.img_usuario_foto_perfil);
 
@@ -138,6 +204,34 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         cargarMenu();
         cargarUsuario();
+        reservas.clear();
+        cargarHistorial(usuario.getUid());
+    }
+
+    public void cargarHistorial(String idUsuario){
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        databaseRef.child("reservas-cliente/").child(idUsuario)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                            ReservasAdapter reservasAdapter = new ReservasAdapter(ProfileActivity.this, reservas);
+                            lv_historialReservas.setAdapter(reservasAdapter);
+
+                            for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                Log.i("Log_Profile","for");
+                                ReservaCliente reservaCliente = data.getValue(ReservaCliente.class);
+                                reservasAdapter.add(reservaCliente);
+                            }
+                            reservasAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 
     // Inflate de los elementos del menú

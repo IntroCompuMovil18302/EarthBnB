@@ -289,7 +289,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                                     String key = databaseRef.push().getKey();
                                                     databaseRef = database.getReference(PATH_RESERVAS_CLIENTE + usuarioActual.getIdUsuario() + "/" + key);
 
-                                                    ReservaCliente reservaCliente = new ReservaCliente(idAlojamiento, reservaKeyReserva);
+                                                    Date d = new Date(reserva.getFechaFin());
+                                                    Date d2 = new Date(reserva.getFechaInicio());
+                                                    DateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
+
+                                                    ReservaCliente reservaCliente = new ReservaCliente(idAlojamiento, reservaKeyReserva, alojamiento.getDescripcion(), alojamiento.getTipo(), simple.format(d2) + " - " + simple.format(d));
                                                     databaseRef.setValue(reservaCliente);
 
                                                     Toast.makeText(HomeActivity.this, "Reserva realizada exitosamente", Toast.LENGTH_LONG).show();

@@ -64,7 +64,9 @@ public class ClientRatingActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 database = FirebaseDatabase.getInstance();
 
-                final String idAlojamiento= (String) intent.getExtras().get("alojamiento");
+                Bundle extras = intent.getExtras();
+                final String idAlojamiento= (String) extras.getString("alojamiento");
+                final String idReserva= (String) extras.getString("reserva");
 
                 databaseRef = database.getReference("usuarios/" + mAuth.getUid());
                 databaseRef.addValueEventListener(new ValueEventListener() {
@@ -126,6 +128,21 @@ public class ClientRatingActivity extends AppCompatActivity {
                                     }
                                 });
 
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+                //Borrar reserva
+                databaseRef = database.getReference("reservas/" + idAlojamiento + "/" + idReserva);
+                databaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                            appleSnapshot.getRef().removeValue();
+                            Log.d("Log_Rating","FOR");
+                        }
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
