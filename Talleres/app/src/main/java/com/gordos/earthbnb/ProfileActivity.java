@@ -207,8 +207,25 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 break;
 
             case R.id.nav_agregar_alojamiento:
-                intent = new Intent(ProfileActivity.this, AgregarAlojamientoActivity.class);
-                startActivity(intent);
+                databaseRef = FirebaseDatabase.getInstance().getReference();
+                database = FirebaseDatabase.getInstance();
+
+                databaseRef = database.getReference("usuarios/" + mAuth.getUid());
+                databaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot1) {
+                        final Usuario usuarioActual = dataSnapshot1.getValue(Usuario.class);
+                        if(usuarioActual.getTipo().equals("Anfitrión")){
+                            Intent intent2 = new Intent(ProfileActivity.this, AgregarAlojamientoActivity.class);
+                            startActivity(intent2);
+                        } else {
+                            Toast.makeText(ProfileActivity.this, "Usted no es anfitrión", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
                 break;
 
             case R.id.nav_cerrar_sesion:

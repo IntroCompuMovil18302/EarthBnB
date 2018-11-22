@@ -92,7 +92,7 @@ public class ClientRatingActivity extends AppCompatActivity {
                                             databaseRef = database.getReference(PATH_CALIFICACIONES + alojamiento.getIdAlojamiento() + "/" + comentario_calificacionKey);
                                             databaseRef.setValue(comentario_calificacion);
 
-                                            //Hacer promedio y colocarlo en el alojamiento
+
                                             databaseRef = FirebaseDatabase.getInstance().getReference();
 
                                             //Buscar cada calificacion y hacer el promedio de calificaciones

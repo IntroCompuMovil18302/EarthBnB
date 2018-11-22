@@ -70,7 +70,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gordos.earthbnb.modelo.Alojamiento;
+import com.gordos.earthbnb.modelo.Reserva;
 import com.gordos.earthbnb.modelo.Ubicacion;
+import com.gordos.earthbnb.modelo.Usuario;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -127,6 +129,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String CERO = "0";
     private static final String BARRA = "/";
     private static final String PATH_FECHAS_RESERVA = "fechas-reserva/";
+    private static final String PATH_RESERVAS = "reservas/";
 
     // Calendario para obtener fecha & hora
     public final Calendar c = Calendar.getInstance();
@@ -698,24 +701,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (distancia <= 2) {
                             if ((fechaInicio >= nuevoAlojamiento.getFechaInicio() && fechaInicio <= nuevoAlojamiento.getFechaFin()) && (fechafin >= nuevoAlojamiento.getFechaInicio() && fechafin <= nuevoAlojamiento.getFechaFin())) {
 
-                                databaseReferenceFechas = database.getReference(PATH_FECHAS_RESERVA + nuevoAlojamiento.getIdAlojamiento());
+                                databaseReferenceFechas = database.getReference(PATH_RESERVAS + nuevoAlojamiento.getIdAlojamiento());
 
                                 databaseReferenceFechas.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        boolean fechaCruzada = false;
+                                        boolean fechaCruzada = true;
 
-                                        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                                            long fechaReserva = singleSnapshot.getValue(Long.class);
-                                            Log.i("FECHA FIN RESERVA", "" + fechaReserva);
+                                        for (DataSnapshot reservaSnapshot : dataSnapshot.getChildren()) {
+                                            Reserva reserva = reservaSnapshot.getValue(Reserva.class);
+                                            if (reserva.getFechaFin() != 0 && reserva.getFechaInicio() != 0) {
+                                                if (nuevoAlojamiento.getFechaInicio() <= fechaInicio && nuevoAlojamiento.getFechaFin() >= fechafin) {
+                                                    fechaCruzada = true;
+                                                    Log.d("Log_Home", "for_comparar fechas con reserva 4");
+                                                }
 
-                                            if (fechaReserva >= fechaInicio && fechaReserva <= fechafin) {
-                                                fechaCruzada = true;
+                                                Log.d("Log_Home I", reserva.getFechaInicio() + "");
+                                                Log.d("Log_Home F", reserva.getFechaFin() + "");
+
+                                                if ((fechaInicio >= reserva.getFechaInicio() && fechaInicio <= reserva.getFechaFin()
+                                                        && (fechafin >= reserva.getFechaInicio() && fechafin <= reserva.getFechaFin()))) {
+                                                    fechaCruzada = false;
+                                                    Log.d("Log_Home", "for_comparar fechas con reserva 2");
+                                                    break;
+                                                } else {
+                                                    fechaCruzada = true;
+                                                    Log.d("Log_Home", "for_comparar fechas con reserva 3");
+                                                }
+
                                             }
-
                                         }
-                                        if (!fechaCruzada) {
+
+
+                                        if (fechaCruzada) {
                                             String calificacion = "";
                                             if (nuevoAlojamiento.getCalificacion() == -1) {
                                                 calificacion = "Este alojamiento aún no ha sido calificado";
@@ -784,8 +803,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case R.id.nav_agregar_alojamiento:
-                intent = new Intent(MapsActivity.this, AgregarAlojamientoActivity.class);
-                startActivity(intent);
+
+                databaseRef = FirebaseDatabase.getInstance().getReference();
+                database = FirebaseDatabase.getInstance();
+
+                databaseRef = database.getReference("usuarios/" + mAuth.getUid());
+                databaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot1) {
+                        final Usuario usuarioActual = dataSnapshot1.getValue(Usuario.class);
+                        if(usuarioActual.getTipo().equals("Anfitrión")){
+                            Intent intent2 = new Intent(MapsActivity.this, AgregarAlojamientoActivity.class);
+                            startActivity(intent2);
+                        } else {
+                            Toast.makeText(MapsActivity.this, "Usted no es anfitrión", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
                 break;
 
             case R.id.nav_cerrar_sesion:

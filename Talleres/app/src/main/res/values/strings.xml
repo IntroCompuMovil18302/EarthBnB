@@ -22,7 +22,7 @@
     <string name="label_camara">Cámara</string>
     <string name="label_registrarme">Registrarme</string>
     <string name="label_agregar_alojamiento">Agregar Alojamiento</string>
-    <string name="label_arrendar_alojamiento">Arrendar Alojamiento</string>
+    <string name="label_arrendar_alojamiento">Realizar Reserva</string>
     <string name="label_ver_alojamiento">Ver Alojamiento</string>
     <string name="label_enviar">Enviar</string>
     <string name="label_hueped">Huésped</string>
@@ -31,7 +31,7 @@
     <string name="label_seleccionar_ubicacion">Selecciona una ubicación</string>
 
     <string name="label_tipoAlojamiento">Tipo Alojamiento</string>
-    <string name="label_precio">Precio (COP)</string>
+    <string name="label_precio">Precio noche(COP)</string>
     <string name="label_numero_huspedes">Cantidad de huéspedes</string>
     <string name="label_numero_camas">Cantidad de camas</string>
     <string name="label_numero_banos">Cantidad de baños</string>

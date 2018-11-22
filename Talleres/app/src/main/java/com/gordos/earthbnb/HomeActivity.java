@@ -1,5 +1,6 @@
 package com.gordos.earthbnb;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -54,14 +55,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.gordos.earthbnb.modelo.Alojamiento;
 import com.gordos.earthbnb.modelo.Comentario_Calificacion;
+import com.gordos.earthbnb.modelo.Reserva;
+import com.gordos.earthbnb.modelo.ReservaCliente;
+import com.gordos.earthbnb.modelo.Usuario;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -78,6 +86,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private BitmapDrawable imagenCargada;
 
     private static final String PATH_ALOJAMIENTOS = "alojamientos/";
+    private static final String PATH_RESERVAS = "reservas/";
+    private static final String PATH_FECHAS_RESERVA = "fechas-reserva/";
+    private static final String PATH_RESERVAS_CLIENTE = "reservas-cliente/";
     private boolean esFechaInicio;
 
     // Variables menu
@@ -110,6 +121,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private TextView tv_ver_fecha_inicio;
     private TextView tv_ver_fecha_fin;
     private TextView et_verBanioPrivado;
+    private TextView tv_ver_fecha_disponible;
     private Button btn_arrendar_alojamiento_submit;
     private ImageButton btn_ver_fecha_inicio;
     private ImageButton btn_ver_fecha_fin;
@@ -117,7 +129,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private ListView lv_comentarios;
     //private Button btn_calificar_alojamiento_submit;
 
-    List<Comentario_Calificacion> comentarios= new ArrayList<Comentario_Calificacion>();
+    List<Comentario_Calificacion> comentarios = new ArrayList<Comentario_Calificacion>();
+    boolean banderaFecha;
 
 
     @Override
@@ -125,6 +138,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        banderaFecha = true;
+
+        tv_ver_fecha_disponible = (TextView) findViewById(R.id.tv_ver_fecha_disponible);
         lv_comentarios = (ListView) findViewById(R.id.lv_comentarios);
         et_verTipoAlojamiento = (TextView) findViewById(R.id.et_verTipoAlojamiento);
         et_verPrecio = (TextView) findViewById(R.id.et_verPrecio);
@@ -152,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         ly_fotos_alojamiento = (LinearLayout) findViewById(R.id.ly_fotos_alojamiento);
 
-        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             super.onBackPressed();
         }
 
@@ -160,7 +176,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mAuth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
-        final String idAlojamiento= (String) intent.getExtras().get("alojamiento");
+        final String idAlojamiento = (String) intent.getExtras().get("alojamiento");
         cargarAlojamiento(idAlojamiento);
 
         btn_ver_fecha_inicio.setOnClickListener(new View.OnClickListener() {
@@ -198,12 +214,121 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        btn_arrendar_alojamiento_submit.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+                if (evaluarCampos()) {
+
+                    databaseRef = FirebaseDatabase.getInstance().getReference();
+                    database = FirebaseDatabase.getInstance();
+
+                    databaseRef = database.getReference("usuarios/" + mAuth.getUid());
+                    ValueEventListener valueEventListener = databaseRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot1) {
+                            final Usuario usuarioActual = dataSnapshot1.getValue(Usuario.class);
+
+                            databaseRef = database.getReference("alojamientos/" + idAlojamiento);
+                            ValueEventListener valueEventListener = databaseRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot2) {
+                                    final Alojamiento alojamiento = dataSnapshot2.getValue(Alojamiento.class);
+
+                                    databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento);
+                                    final String reservaKeyReserva = databaseRef.push().getKey();
+                                    databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento + "/" + reservaKeyReserva);
+                                    final Reserva reservaTemporal = new Reserva();
+                                    databaseRef.setValue(reservaTemporal);
+
+                                    banderaFecha = true;
+
+                                    Log.d("Log_Home", "for_comparar fechas con reserva 7");
+                                    databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento);
+                                    databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot3) {
+                                            Log.d("Log_Home", "for_comparar fechas con reserva 8");
+                                            if (dataSnapshot3.exists()) {
+
+                                                Log.d("Log_Home", "for_comparar fechas con reserva");
+                                                for (DataSnapshot reservaSnapshot : dataSnapshot3.getChildren()) {
+                                                    Reserva reserva = reservaSnapshot.getValue(Reserva.class);
+                                                    if (reserva.getFechaFin() != 0 && reserva.getFechaInicio() != 0) {
+                                                        if (alojamiento.getFechaInicio() <= fechaInicio && alojamiento.getFechaFin() >= fechafin) {
+                                                            banderaFecha = true;
+                                                            Log.d("Log_Home", "for_comparar fechas con reserva 4");
+                                                        }
+                                                        if ((fechaInicio > reserva.getFechaInicio() && fechaInicio < reserva.getFechaFin()
+                                                                && (fechafin > reserva.getFechaInicio() && fechafin < reserva.getFechaFin()))) {
+                                                            banderaFecha = true;
+                                                            Log.d("Log_Home", "for_comparar fechas con reserva 2");
+                                                        } else {
+                                                            banderaFecha = false;
+                                                            databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento + "/" + reservaKeyReserva);
+                                                            databaseRef.removeValue();
+                                                            Log.d("Log_Home", "for_comparar fechas con reserva 3");
+                                                            break;
+                                                        }
+
+                                                    }
+                                                }
+
+                                                if (banderaFecha) {
+
+                                                    //databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento);
+                                                    //String reservaKey = databaseRef.push().getKey();
+                                                    Log.d("Log_Home", "for_comparar fechas con reserva 5");
+                                                    databaseRef = database.getReference(PATH_RESERVAS + idAlojamiento + "/" + reservaKeyReserva);
+                                                    Reserva reserva = new Reserva(fechaInicio, fechafin, usuarioActual.getIdUsuario());
+                                                    databaseRef.setValue(reserva);
+
+                                                    databaseRef = database.getReference(PATH_RESERVAS_CLIENTE + usuarioActual.getIdUsuario());
+                                                    String key = databaseRef.push().getKey();
+                                                    databaseRef = database.getReference(PATH_RESERVAS_CLIENTE + usuarioActual.getIdUsuario() + "/" + key);
+
+                                                    ReservaCliente reservaCliente = new ReservaCliente(idAlojamiento, reservaKeyReserva);
+                                                    databaseRef.setValue(reservaCliente);
+
+                                                    Toast.makeText(HomeActivity.this, "Reserva realizada exitosamente", Toast.LENGTH_LONG).show();
+
+                                                    Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
+                                                    startActivity(intent);
+
+                                                } else {
+                                                    Toast.makeText(HomeActivity.this, "Fecha reservada: cambie la fechas", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                } else {
+                    Toast.makeText(HomeActivity.this, "Seleccione las fechas de reserva", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         cargarMenu();
         cargarComentarios(idAlojamiento);
-
     }
 
-    public void cargarComentarios(String idAlojamiento){
+    public void cargarComentarios(String idAlojamiento) {
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -212,17 +337,18 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            ComentariosAdapter comentariosAdapter = new ComentariosAdapter(HomeActivity.this,comentarios);
+                            ComentariosAdapter comentariosAdapter = new ComentariosAdapter(HomeActivity.this, comentarios);
                             lv_comentarios.setAdapter(comentariosAdapter);
 
-                            for (DataSnapshot calificacion: dataSnapshot.getChildren()) {
+                            for (DataSnapshot calificacion : dataSnapshot.getChildren()) {
                                 Comentario_Calificacion comentario_calificacion = calificacion.getValue(Comentario_Calificacion.class);
                                 comentarios.add(comentario_calificacion);
                             }
-                            Log.d("Log_home_tamcom",String.valueOf(comentarios.size()));
+                            Log.d("Log_home_tamcom", String.valueOf(comentarios.size()));
                             comentariosAdapter.notifyDataSetChanged();
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -232,7 +358,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             super.onBackPressed();
         }
         navigationView.setCheckedItem(R.id.nav_hospedajes);
@@ -252,6 +378,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public boolean evaluarCampos() {
+
+        boolean bandera = true;
+
+        if (tv_ver_fecha_inicio.getText().equals("Escoger fecha de inicio")) {
+            bandera = false;
+        }
+
+        if (tv_ver_fecha_fin.getText().equals("Escoger fecha final")) {
+            bandera = false;
+        }
+
+        return bandera;
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -269,8 +410,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_agregar_alojamiento:
-                intent = new Intent(HomeActivity.this, AgregarAlojamientoActivity.class);
-                startActivity(intent);
+
+                databaseRef = FirebaseDatabase.getInstance().getReference();
+                database = FirebaseDatabase.getInstance();
+
+                databaseRef = database.getReference("usuarios/" + mAuth.getUid());
+                databaseRef.addValueEventListener(new ValueEventListener() {
+                      @Override
+                      public void onDataChange(DataSnapshot dataSnapshot1) {
+                          final Usuario usuarioActual = dataSnapshot1.getValue(Usuario.class);
+                          if(usuarioActual.getTipo().equals("Anfitrión")){
+                              Intent intent2 = new Intent(HomeActivity.this, AgregarAlojamientoActivity.class);
+                              startActivity(intent2);
+                          } else {
+                              Toast.makeText(HomeActivity.this, "Usted no es anfitrión", Toast.LENGTH_SHORT).show();
+                          }
+                      }
+                      @Override
+                      public void onCancelled(DatabaseError databaseError) {
+                      }
+                  });
                 break;
 
             case R.id.nav_cerrar_sesion:
@@ -299,55 +458,63 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void cargarAlojamiento(String idAlojamiento){
+    public void cargarAlojamiento(String idAlojamiento) {
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         databaseRef.child(PATH_ALOJAMIENTOS).child(idAlojamiento)
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Alojamiento alojamiento = dataSnapshot.getValue(Alojamiento.class);
-                    //Log.d("Log_Home",alojamiento.getIdAlojamiento());
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Alojamiento alojamiento = dataSnapshot.getValue(Alojamiento.class);
+                            //Log.d("Log_Home",alojamiento.getIdAlojamiento());
 
-                    cargarFotos(alojamiento.getIdAlojamiento());
+                            cargarFotos(alojamiento.getIdAlojamiento());
 
-                    String si_no;
+                            String si_no;
 
-                    et_verTipoAlojamiento.setText(alojamiento.getTipo());
-                    et_verPrecio.setText("$"+String.valueOf(alojamiento.getPrecio()));
-                    et_verNumHuespedes.setText(String.valueOf(alojamiento.getHuespedes()));
-                    et_verNumHabitaciones.setText(String.valueOf(alojamiento.getHabitaciones()));
-                    et_verNumCamas.setText(String.valueOf(alojamiento.getCamas()));
-                    et_verNumBanios.setText(String.valueOf(alojamiento.getBanos()));
-                    si_no= (alojamiento.isWifi())?"Si":"No";
-                    et_verWifi.setText(si_no);
-                    si_no= (alojamiento.isElementosBasicos())?"Si":"No";
-                    et_verElementosBasicos.setText(si_no);
-                    si_no= (alojamiento.isTv())?"Si":"No";
-                    et_verTV.setText(si_no);
-                    si_no= (alojamiento.isArmario())?"Si":"No";
-                    et_verArmario.setText(si_no);
-                    si_no= (alojamiento.isEscritorio())?"Si":"No";
-                    et_verEscritorio.setText(si_no);
-                    si_no= (alojamiento.isDesayuno())?"Si":"No";
-                    et_verDesayuno.setText(si_no);
-                    si_no= (alojamiento.isAccesoCocina())?"Si":"No";
-                    et_verAccesoCocina.setText(si_no);
-                    si_no= (alojamiento.isBanoPrivado())?"Si":"No";
-                    et_verBanioPrivado.setText(si_no);
-                    et_descripcion_ver.setText("Descripción: "+alojamiento.getDescripcion());
+                            et_verTipoAlojamiento.setText(alojamiento.getTipo());
+                            et_verPrecio.setText("$" + String.valueOf(alojamiento.getPrecio()));
+                            et_verNumHuespedes.setText(String.valueOf(alojamiento.getHuespedes()));
+                            et_verNumHabitaciones.setText(String.valueOf(alojamiento.getHabitaciones()));
+                            et_verNumCamas.setText(String.valueOf(alojamiento.getCamas()));
+                            et_verNumBanios.setText(String.valueOf(alojamiento.getBanos()));
+                            si_no = (alojamiento.isWifi()) ? "Si" : "No";
+                            et_verWifi.setText(si_no);
+                            si_no = (alojamiento.isElementosBasicos()) ? "Si" : "No";
+                            et_verElementosBasicos.setText(si_no);
+                            si_no = (alojamiento.isTv()) ? "Si" : "No";
+                            et_verTV.setText(si_no);
+                            si_no = (alojamiento.isArmario()) ? "Si" : "No";
+                            et_verArmario.setText(si_no);
+                            si_no = (alojamiento.isEscritorio()) ? "Si" : "No";
+                            et_verEscritorio.setText(si_no);
+                            si_no = (alojamiento.isDesayuno()) ? "Si" : "No";
+                            et_verDesayuno.setText(si_no);
+                            si_no = (alojamiento.isAccesoCocina()) ? "Si" : "No";
+                            et_verAccesoCocina.setText(si_no);
+                            si_no = (alojamiento.isBanoPrivado()) ? "Si" : "No";
+                            et_verBanioPrivado.setText(si_no);
+                            et_descripcion_ver.setText("Descripción: " + alojamiento.getDescripcion());
 
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                            Date d = new Date(alojamiento.getFechaFin());
+                            Date d2 = new Date(alojamiento.getFechaInicio());
+                            DateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
+
+                            tv_ver_fecha_disponible.setText("Fecha disponibilidad: " + simple.format(d2) + " - " + simple.format(d));
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 
-    public void cargarFotos(final String idAlojamiento){
+    public void cargarFotos(final String idAlojamiento) {
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -356,7 +523,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            for (DataSnapshot idFotoAlojamiento: dataSnapshot.getChildren()) {
+                            for (DataSnapshot idFotoAlojamiento : dataSnapshot.getChildren()) {
                                 //Log.d("Log_Home",idFotoAlojamiento.getValue(String.class));
                                 StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("fotos-alojamiento/" + idAlojamiento + "/" + idFotoAlojamiento.getValue(String.class) + ".jpg");
                                 //Log.d("Log_Home","fotos-alojamiento/" + idAlojamiento + "/" + idFotoAlojamiento.getValue(String.class) + ".jpg");
@@ -369,7 +536,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                                         ImageView nuevaFoto = new ImageView(HomeActivity.this);
                                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                        params.setMargins(dpToPx(8),dpToPx(8),dpToPx(8),dpToPx(8));
+                                        params.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
                                         params.height = dpToPx(100);
                                         params.width = dpToPx(100);
 
@@ -386,6 +553,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -413,6 +581,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MILLISECOND, 0);
 
                 if (esFechaInicio) {
                     tv_ver_fecha_inicio.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
@@ -425,6 +594,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
             //Estos valores deben ir en ese orden, de lo contrario no mostrara la fecha actual
         }, anio, mes, dia);
+
         //Muestro el widget
         recogerFecha.show();
 
@@ -436,7 +606,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 .density;
         return Math.round((float) dp * density);
     }
-
 
 
 }
